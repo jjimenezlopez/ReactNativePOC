@@ -1,2 +1,2 @@
-# react-native-poc
-Just some proofs of concept using React Native
+# React Native Proofs Of Concept
+Just some proofs of concept trying to learn React Native.
