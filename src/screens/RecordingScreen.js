@@ -3,9 +3,9 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
 import Sound from 'react-native-sound';
-import { AudioUtils } from 'react-native-audio';
 import AudioRecording from '../components/AudioRecording';
 
+import { AUDIO_PATH } from '../constants';
 import * as actions from '../actions';
 
 class RecordingScreen extends React.Component {
@@ -34,7 +34,7 @@ class RecordingScreen extends React.Component {
       this.sound.release();
     }
 
-    this.sound = new Sound(this.state.filename, AudioUtils.DocumentDirectoryPath, (error) => {
+    this.sound = new Sound(this.state.filename, AUDIO_PATH, (error) => {
       if (error) {
         console.error(error);
       }

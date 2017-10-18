@@ -6,10 +6,10 @@ import {
   Platform,
   PermissionsAndroid,
   Alert } from 'react-native';
-import { AudioRecorder, AudioUtils } from 'react-native-audio';
+import { AudioRecorder } from 'react-native-audio';
 import { Icon } from 'react-native-elements';
+import { AUDIO_PATH } from '../constants';
 
-const AUDIO_PATH = `${AudioUtils.DocumentDirectoryPath}/`;
 const FILE_EXTENSION = 'aac';
 
 export default class AudioRecording extends Component {
