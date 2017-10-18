@@ -5,8 +5,8 @@ import ReduxThunk from 'redux-thunk';
 import { StyleSheet, View } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import firebase from 'firebase';
-import reducers from './reducers';
-import RecordingScreen from './screens/RecordingScreen';
+import reducers from './src/reducers';
+import RecordingScreen from './src/screens/RecordingScreen';
 
 export default class App extends React.Component {
   constructor() {

@@ -10,6 +10,7 @@ import { AudioRecorder, AudioUtils } from 'react-native-audio';
 import { Icon } from 'react-native-elements';
 
 const AUDIO_PATH = `${AudioUtils.DocumentDirectoryPath}/`;
+const FILE_EXTENSION = 'aac';
 
 export default class AudioRecording extends Component {
   state = {
@@ -28,7 +29,7 @@ export default class AudioRecording extends Component {
 
         if (!hasPermission) return;
 
-        this.prepareRecordingPath(`${AUDIO_PATH}${this.randomName()}.aac`);
+        this.prepareRecordingPath(`${AUDIO_PATH}${this.randomName()}.${FILE_EXTENSION}`);
 
         AudioRecorder.onProgress = (data) => {
           this.setState({ currentTime: Math.floor(data.currentTime) });
