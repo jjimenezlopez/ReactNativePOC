@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { 
+import {
   View,
   Text,
   TouchableWithoutFeedback,
@@ -40,7 +40,8 @@ export default class AudioRecording extends Component {
             this.finishRecording(data.status === 'OK', data.audioFileURL);
           }
         };
-      });
+      })
+      .catch(err => { console.error(err); });
   }
 
   incrementer = null;
@@ -75,12 +76,14 @@ export default class AudioRecording extends Component {
      .then((result) => {
        console.log('Permission result:', result);
        return (result === true || result === PermissionsAndroid.RESULTS.GRANTED);
-     });
+     })
+     .catch(error => { Alert.alert(error); });
   }
 
   finishRecording(didSucceed, filePath) {
+    const filename = filePath.replace(/^.*[\\/]/, '');
     this.setState({ finished: didSucceed });
-    this.props.onStopRecording(filePath, this.state.currentTime);
+    this.props.onStopRecording(filename);
     this.prepareRecordingPath(`${AUDIO_PATH}${this.randomName()}.aac`);
     console.log(`Finished recording of duration ${this.state.currentTime} seconds at path: ${filePath}`); // eslint-disable-line
   }

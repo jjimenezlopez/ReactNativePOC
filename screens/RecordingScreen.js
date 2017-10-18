@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
 import Sound from 'react-native-sound';
+import { AudioUtils } from 'react-native-audio';
 import AudioRecording from '../components/AudioRecording';
 
 import * as actions from '../actions';
@@ -11,7 +12,7 @@ class RecordingScreen extends React.Component {
   state = {
     recording: false,
     playing: false,
-    recordURI: null,
+    filename: '',
     duration: 0
   };
 
@@ -23,23 +24,43 @@ class RecordingScreen extends React.Component {
     this.setState({ recording: true });
   }
 
-  onStopRecording = (uri, duration) => {
-    this.setState({ recording: false, recordURI: uri, duration: this.formatSeconds(duration) });
+  onStopRecording = (filename) => {
+    this.setState({
+      recording: false,
+      filename
+    });
+
+    if (this.sound) {
+      this.sound.release();
+    }
+
+    this.sound = new Sound(this.state.filename, AudioUtils.DocumentDirectoryPath, (error) => {
+      if (error) {
+        console.error(error);
+      }
+
+      this.setState({ duration: this.formatSeconds(Math.floor(this.sound.getDuration())) });
+
+      console.log(`sound loaded: ${this.sound.getDuration()}`);
+    });
+
     // this.props.uploadRecording(uri);
   }
-
 
   formatSeconds(seconds) {
     return `${Math.floor(seconds / 60)}:${('0' + seconds % 60).slice(-2)}`; // eslint-disable-line
   }
 
   playRecording = async () => {
-    const sound = new Sound(this.state.recordURI, Sound.MAIN_BUNDLE, (error) => {
-      if (error) {
-        console.log(error);
-      }
+    this.setState({ playing: true });
 
-      console.log(`sound loaded: ${sound.getDuration()}`);
+    this.sound.play((success) => {
+      if (success) {
+        console.log('successfully finished playing');
+        this.setState({ playing: false });
+      } else {
+        console.log('playback failed due to audio decoding errors');
+      }
     });
   }
 
@@ -55,9 +76,7 @@ class RecordingScreen extends React.Component {
   }
 
   renderPlayButton() {
-    console.log(this.state.recordURI);
-    console.log(this.state.recording);
-    if (this.state.recordURI && !this.state.recording) {
+    if (this.state.filename && !this.state.recording) {
       return (
         <Button
           large
