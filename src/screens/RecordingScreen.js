@@ -44,7 +44,7 @@ class RecordingScreen extends React.Component {
       console.log(`sound loaded: ${this.sound.getDuration()}`);
     });
 
-    // this.props.uploadRecording(uri);
+    this.props.uploadRecording(filename);
   }
 
   formatSeconds(seconds) {
