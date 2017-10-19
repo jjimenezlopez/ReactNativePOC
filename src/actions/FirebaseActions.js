@@ -4,8 +4,12 @@ import firebase from '../services/firebase';
 
 import {
   UPLOAD_RECORDING_SUCCESS,
-  UPLOAD_RECORDING_FAILED
+  UPLOAD_RECORDING_FAILED,
+  USER_START_AUTHORIZING,
+  USER_AUTHORIZED,
+  USER_AUTHORIZATION_ERROR
 } from './types';
+
 import { AUDIO_PATH } from '../constants';
 
 // Prepare Blob support
@@ -49,5 +53,17 @@ export const uploadRecording = (filename) => async (dispatch) => {
     console.log('audio not uploaded!');
 
     dispatch({ type: UPLOAD_RECORDING_FAILED });
+  }
+};
+
+export const login = () => async dispatch => {
+  try {
+    dispatch({ type: USER_START_AUTHORIZING });
+
+    await firebase.auth().signInAnonymously();
+    dispatch({ type: USER_AUTHORIZED });
+  } catch (error) {
+    console.log(error);
+    dispatch({ type: USER_AUTHORIZATION_ERROR });
   }
 };

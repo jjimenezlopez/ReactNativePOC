@@ -5,13 +5,16 @@ import ReduxThunk from 'redux-thunk';
 import { StyleSheet, View } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import reducers from './src/reducers';
+
 import RecordingScreen from './src/screens/RecordingScreen';
+import LoginScreen from './src/screens/LoginScreen';
 
 export default class App extends React.Component {
 
   render() {
     const MainNavigator = StackNavigator({
-      main: { screen: RecordingScreen }
+      login: { screen: LoginScreen },
+      recording: { screen: RecordingScreen }
     }, {
       headerMode: 'none'
     });
