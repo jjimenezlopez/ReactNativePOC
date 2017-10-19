@@ -21,6 +21,8 @@ class LoginScreen extends Component {
     this.setState({ errorUsernameRequired: this.state.username === '' });
     try {
       await this.props.login();
+      this.props.setUserName(this.state.username);
+      this.props.setUserAvatar(this.state.avatar);
       this.props.navigation.navigate('recording');
     } catch (error) {
       console.error(error);
@@ -53,10 +55,10 @@ class LoginScreen extends Component {
       <View style={styles.container}>
         <View style={styles.form}>
           <FormLabel>Tell me your name</FormLabel>
-          <FormInput onChange={(username) => { this.setState({ username }); }} />
+          <FormInput onChangeText={(username) => { this.setState({ username }); }} />
           {this.showUsernameRequired()}
           <FormLabel>Give me your avatar's URL</FormLabel>
-          <FormInput onChange={(avatar) => { this.setState({ avatar }); }} />
+          <FormInput onChangeText={(avatar) => { this.setState({ avatar }); }} />
           {this.renderLoginButton()}
         </View>
       </View>

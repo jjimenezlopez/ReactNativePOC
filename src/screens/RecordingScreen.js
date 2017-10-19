@@ -94,11 +94,15 @@ class RecordingScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
+        <View style={styles.loginInfo}>
+          <Text>You're logged in as {this.props.username}</Text>
+        </View>
         <View style={styles.topView}>
           {this.renderBigMic()}
           {this.renderPlayButton()}
         </View>
         <View style={styles.bottomView}>
+
           <Text style={styles.infoText}>Mantén pulsado el micrófono para grabar</Text>
           <AudioRecording
             onRecording={this.onRecording}
@@ -127,7 +131,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
-  infoText: { marginBottom: 10 }
+  infoText: { marginBottom: 10 },
+  loginInfo: { marginTop: 30 }
 });
 
-export default connect(null, actions)(RecordingScreen);
+const mapStateToProps = ({ user }) => (
+  { username: user.name, avatar: user.avatar, authorized: user.authorized }
+);
+
+export default connect(mapStateToProps, actions)(RecordingScreen);
