@@ -1,5 +1,4 @@
 /* globals window */
-import { Platform } from 'react-native';
 import RNFetchBlob from 'react-native-fetch-blob';
 import firebase from 'firebase';
 
