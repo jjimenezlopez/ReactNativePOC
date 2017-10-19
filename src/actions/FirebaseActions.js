@@ -1,6 +1,6 @@
 /* globals window */
 import RNFetchBlob from 'react-native-fetch-blob';
-import firebase from 'firebase';
+import firebase from '../services/firebase';
 
 import {
   UPLOAD_RECORDING_SUCCESS,
