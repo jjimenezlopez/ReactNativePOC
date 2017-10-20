@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
+import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import Sound from 'react-native-sound';
 import AudioRecording from '../components/AudioRecording';
@@ -16,8 +17,9 @@ class RecordingScreen extends React.Component {
     duration: 0
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     Sound.setCategory('Playback');
+    this.props.getUserName();
   }
 
   onRecording = () => {
@@ -64,6 +66,16 @@ class RecordingScreen extends React.Component {
     });
   }
 
+  async logout() {
+    await this.props.logout();
+    const navigateAction = NavigationActions.reset({
+      index: 0,
+      actions: [NavigationActions.navigate({ routeName: 'login' })]
+    });
+
+    this.props.navigation.dispatch(navigateAction);
+  }
+
   renderBigMic = () => {
     if (this.state.recording) {
       return (
@@ -95,14 +107,25 @@ class RecordingScreen extends React.Component {
     return (
       <View style={styles.container}>
         <View style={styles.loginInfo}>
-          <Text>You're logged in as {this.props.username}</Text>
+          <View style={{ flexDirection: 'row', flex: 1 }}>
+            <View style={{ flex: 1, alignItems: 'center' }}>
+              <Text>You're logged in as {this.props.username}</Text>
+            </View>
+            <View style={{ flex: -1, marginRight: 10 }}>
+              <Icon
+                name='exit-to-app'
+                color='#517fa4'
+                size={32}
+                onPress={this.logout.bind(this)}
+              />
+            </View>
+          </View>
         </View>
         <View style={styles.topView}>
           {this.renderBigMic()}
           {this.renderPlayButton()}
         </View>
         <View style={styles.bottomView}>
-
           <Text style={styles.infoText}>Mantén pulsado el micrófono para grabar</Text>
           <AudioRecording
             onRecording={this.onRecording}
@@ -121,6 +144,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  loginInfo: { marginTop: 30, flex: 1, flexDirection: 'row' },
   topView: {
     flex: 2,
     justifyContent: 'center',
@@ -131,12 +155,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
-  infoText: { marginBottom: 10 },
-  loginInfo: { marginTop: 30 }
+  infoText: { marginBottom: 10 }
 });
 
-const mapStateToProps = ({ user }) => (
-  { username: user.name, avatar: user.avatar, authorized: user.authorized }
-);
+const mapStateToProps = (state) => {
+  console.log(state);
+
+  return {
+    username: state.user.name,
+    avatar: state.user.avatar,
+    authorized: state.user.authorized,
+    id: state.user.id
+  };
+};
 
 export default connect(mapStateToProps, actions)(RecordingScreen);

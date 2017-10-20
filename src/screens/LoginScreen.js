@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
+import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import { FormLabel, FormInput, FormValidationMessage, Button } from 'react-native-elements';
+
 import * as actions from '../actions';
 
 class LoginScreen extends Component {
@@ -11,19 +13,18 @@ class LoginScreen extends Component {
     errorUsernameRequired: false
   };
 
-  componentDidMount() {
-    if (this.props.username) {
-      this.props.navigation.navigate('recording');
-    }
-  }
-
   async login() {
     this.setState({ errorUsernameRequired: this.state.username === '' });
     try {
       await this.props.login();
       this.props.setUserName(this.state.username);
       this.props.setUserAvatar(this.state.avatar);
-      this.props.navigation.navigate('recording');
+      const navigateAction = NavigationActions.reset({
+        index: 0,
+        actions: [NavigationActions.navigate({ routeName: 'recording' })]
+      });
+
+      this.props.navigation.dispatch(navigateAction);
     } catch (error) {
       console.error(error);
     }
@@ -51,6 +52,7 @@ class LoginScreen extends Component {
   }
 
   render() {
+    console.log(this.props.authorizing);
     return (
       <View style={styles.container}>
         <View style={styles.form}>
@@ -72,8 +74,8 @@ const styles = {
   button: { marginTop: 10 }
 };
 
-const mapStateToProps = ({ user }) => (
-  { username: user.name, avatar: user.avatar, authorizing: user.authorizing }
+const mapStateToProps = ({ user, firebase }) => (
+  { username: user.name, avatar: user.avatar, authorizing: firebase.authorizing, uid: user.id }
 );
 
 export default connect(mapStateToProps, actions)(LoginScreen);

@@ -6,6 +6,7 @@ import { StyleSheet, View } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import reducers from './src/reducers';
 
+import InitialScreen from './src/screens/InitialScreen';
 import RecordingScreen from './src/screens/RecordingScreen';
 import LoginScreen from './src/screens/LoginScreen';
 
@@ -13,6 +14,7 @@ export default class App extends React.Component {
 
   render() {
     const MainNavigator = StackNavigator({
+      initial: { screen: InitialScreen },
       login: { screen: LoginScreen },
       recording: { screen: RecordingScreen }
     }, {

@@ -7,7 +7,8 @@ import {
   UPLOAD_RECORDING_FAILED,
   USER_START_AUTHORIZING,
   USER_AUTHORIZED,
-  USER_AUTHORIZATION_ERROR
+  USER_AUTHORIZATION_ERROR,
+  USER_SIGNED_OUT
 } from './types';
 
 import { AUDIO_PATH } from '../constants';
@@ -65,5 +66,14 @@ export const login = () => async dispatch => {
   } catch (error) {
     console.log(error);
     dispatch({ type: USER_AUTHORIZATION_ERROR });
+  }
+};
+
+export const logout = () => async dispatch => {
+  try {
+    await firebase.auth().signOut();
+    dispatch({ type: USER_SIGNED_OUT });
+  } catch (error) {
+    console.error(error);
   }
 };
