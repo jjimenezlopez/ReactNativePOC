@@ -153,7 +153,8 @@ const styles = StyleSheet.create({
   bottomView: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginBottom: 30
   },
   infoText: { marginBottom: 10 }
 });
