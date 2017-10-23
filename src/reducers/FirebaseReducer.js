@@ -6,10 +6,12 @@ import {
   USER_AUTHORIZATION_ERROR,
   USER_SIGNED_OUT,
   MESSAGE_SENT,
-  SEND_MESSAGE_ERROR
+  SEND_MESSAGE_ERROR,
+  START_MESSAGES_FETCH,
+  END_MESSAGES_FETCH
 } from '../actions/types';
 
-const INITIAL_STATE = [];
+const INITIAL_STATE = {};
 
 export default function (state = INITIAL_STATE, action) {
   switch (action.type) {
@@ -32,6 +34,12 @@ export default function (state = INITIAL_STATE, action) {
     }
     case SEND_MESSAGE_ERROR:
       return { ...state, sendError: true };
+    case START_MESSAGES_FETCH:
+      return { ...state, loading: true };
+    case END_MESSAGES_FETCH: {
+      const { messages } = action.payload;
+      return { ...state, loading: false, messages };
+    }
     default:
       return state;
   }

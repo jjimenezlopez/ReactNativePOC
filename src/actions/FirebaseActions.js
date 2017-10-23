@@ -1,4 +1,5 @@
 /* globals window */
+import _ from 'lodash';
 import RNFetchBlob from 'react-native-fetch-blob';
 import firebase from '../services/firebase';
 
@@ -10,7 +11,10 @@ import {
   USER_AUTHORIZATION_ERROR,
   USER_SIGNED_OUT,
   MESSAGE_SENT,
-  SEND_MESSAGE_ERROR
+  SEND_MESSAGE_ERROR,
+  START_MESSAGES_FETCH,
+  END_MESSAGES_FETCH,
+  FETCH_MESSAGES_ERROR
 } from './types';
 
 import { AUDIO_PATH } from '../constants';
@@ -70,6 +74,23 @@ export const sendMessage = (message) => async dispatch => {
   } catch (error) {
     console.error(error);
     dispatch({ type: SEND_MESSAGE_ERROR });
+  }
+};
+
+export const fetchMessages = () => async dispatch => {
+  try {
+    dispatch({ type: START_MESSAGES_FETCH });
+    firebase.database().ref('messages')
+      .orderByKey()
+      .on('value', (snapshot) => {
+        const messagesObject = snapshot.val();
+        const messages = !_.isNull(messagesObject) ? Object.keys(messagesObject)
+          .map((key, index) => ({ ...messagesObject[key], _id: index })) : [];
+        dispatch({ type: END_MESSAGES_FETCH, payload: { messages } });
+      });
+  } catch (error) {
+    console.error(error);
+    dispatch({ type: FETCH_MESSAGES_ERROR });
   }
 };
 

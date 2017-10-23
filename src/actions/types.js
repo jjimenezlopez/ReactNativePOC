@@ -9,3 +9,6 @@ export const USER_AUTHORIZATION_ERROR = 'user_authorization_error';
 export const USER_SIGNED_OUT = 'user_signed_out';
 export const MESSAGE_SENT = 'message_sent';
 export const SEND_MESSAGE_ERROR = 'send_message_error';
+export const START_MESSAGES_FETCH = 'start_messages_fetch';
+export const END_MESSAGES_FETCH = 'end_messages_fetch';
+export const FETCH_MESSAGES_ERROR = 'fetch_messages_error';

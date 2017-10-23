@@ -21,6 +21,7 @@ class RecordingScreen extends React.Component {
   async componentDidMount() {
     Sound.setCategory('Playback');
     this.props.getUserName();
+    this.props.fetchMessages();
   }
 
   onRecording = () => {
@@ -55,7 +56,9 @@ class RecordingScreen extends React.Component {
 
   async sendMessage(filename) {
     const message = {
-      username: this.props.username,
+      user: {
+        name: this.props.username,
+      },
       filename,
       timestamp: Date.now()
     };
@@ -116,7 +119,7 @@ class RecordingScreen extends React.Component {
     }
   }
 
-  renderLoading() {
+  renderSending() {
     if (this.state.sending) {
       return (
         <ActivityIndicator />
@@ -145,7 +148,7 @@ class RecordingScreen extends React.Component {
         <View style={styles.topView}>
           {this.renderBigMic()}
           {this.renderPlayButton()}
-          {this.renderLoading()}
+          {this.renderSending()}
         </View>
         <View style={styles.bottomView}>
           <Text style={styles.infoText}>Mantén pulsado el micrófono para grabar</Text>
@@ -187,7 +190,9 @@ const mapStateToProps = (state) => {
   return {
     username: state.user.name,
     authorized: state.user.authorized,
-    id: state.user.id
+    id: state.user.id,
+    loading: state.firebase.loading,
+    messages: state.firebase.messages
   };
 };
 
