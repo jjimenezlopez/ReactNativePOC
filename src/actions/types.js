@@ -9,3 +9,5 @@ export const USER_START_AUTHORIZING = 'user_start_authorizing';
 export const USER_AUTHORIZED = 'user_authorized';
 export const USER_AUTHORIZATION_ERROR = 'user_authorization_error';
 export const USER_SIGNED_OUT = 'user_signed_out';
+export const MESSAGE_SENT = 'message_sent';
+export const SEND_MESSAGE_ERROR = 'send_message_error';

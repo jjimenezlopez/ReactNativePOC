@@ -8,7 +8,9 @@ import {
   USER_START_AUTHORIZING,
   USER_AUTHORIZED,
   USER_AUTHORIZATION_ERROR,
-  USER_SIGNED_OUT
+  USER_SIGNED_OUT,
+  MESSAGE_SENT,
+  SEND_MESSAGE_ERROR
 } from './types';
 
 import { AUDIO_PATH } from '../constants';
@@ -34,6 +36,7 @@ const getBlob = async (filename) => {
   return blob;
 };
 
+// UPLOAD RECORDINGS
 export const uploadRecording = (filename) => async (dispatch) => {
   try {
     console.log(`uploadRecording: ${filename}`);
@@ -57,6 +60,20 @@ export const uploadRecording = (filename) => async (dispatch) => {
   }
 };
 
+// CHAT MESSAGES
+export const sendMessage = (message) => async dispatch => {
+  try {
+    console.log('sending message');
+    firebase.database().ref('messages').push(message);
+
+    dispatch({ type: MESSAGE_SENT, payload: message });
+  } catch (error) {
+    console.error(error);
+    dispatch({ type: SEND_MESSAGE_ERROR });
+  }
+};
+
+// LOGIN
 export const login = () => async dispatch => {
   try {
     dispatch({ type: USER_START_AUTHORIZING });

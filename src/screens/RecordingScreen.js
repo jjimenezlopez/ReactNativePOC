@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -12,6 +12,7 @@ import * as actions from '../actions';
 class RecordingScreen extends React.Component {
   state = {
     recording: false,
+    sending: false,
     playing: false,
     filename: '',
     duration: 0
@@ -26,9 +27,10 @@ class RecordingScreen extends React.Component {
     this.setState({ recording: true });
   }
 
-  onStopRecording = (filename) => {
+  onStopRecording = async (filename) => {
     this.setState({
       recording: false,
+      sending: true,
       filename
     });
 
@@ -42,11 +44,22 @@ class RecordingScreen extends React.Component {
       }
 
       this.setState({ duration: this.formatSeconds(Math.floor(this.sound.getDuration())) });
-
       console.log(`sound loaded: ${this.sound.getDuration()}`);
     });
 
-    this.props.uploadRecording(filename);
+
+    await this.props.uploadRecording(filename);
+    await this.sendMessage(filename);
+    this.setState({ sending: false });
+  }
+
+  async sendMessage(filename) {
+    const message = {
+      username: this.props.username,
+      filename,
+      timestamp: Date.now()
+    };
+    await this.props.sendMessage(message);
   }
 
   formatSeconds(seconds) {
@@ -88,7 +101,7 @@ class RecordingScreen extends React.Component {
   }
 
   renderPlayButton() {
-    if (this.state.filename && !this.state.recording) {
+    if (this.state.filename && !this.state.recording && !this.state.sending) {
       return (
         <Button
           large
@@ -99,6 +112,14 @@ class RecordingScreen extends React.Component {
           onPress={this.playRecording}
           icon={{ name: 'play-arrow' }}
         />
+      );
+    }
+  }
+
+  renderLoading() {
+    if (this.state.sending) {
+      return (
+        <ActivityIndicator />
       );
     }
   }
@@ -124,6 +145,7 @@ class RecordingScreen extends React.Component {
         <View style={styles.topView}>
           {this.renderBigMic()}
           {this.renderPlayButton()}
+          {this.renderLoading()}
         </View>
         <View style={styles.bottomView}>
           <Text style={styles.infoText}>Mantén pulsado el micrófono para grabar</Text>

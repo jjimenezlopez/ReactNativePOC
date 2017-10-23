@@ -4,7 +4,9 @@ import {
   USER_START_AUTHORIZING,
   USER_AUTHORIZED,
   USER_AUTHORIZATION_ERROR,
-  USER_SIGNED_OUT
+  USER_SIGNED_OUT,
+  MESSAGE_SENT,
+  SEND_MESSAGE_ERROR
 } from '../actions/types';
 
 const INITIAL_STATE = [];
@@ -24,6 +26,12 @@ export default function (state = INITIAL_STATE, action) {
       return { ...state, autherror: true };
     case USER_SIGNED_OUT:
       return { ...state, authorized: false };
+    case MESSAGE_SENT: {
+      const { message } = action.payload;
+      return { ...state, message };
+    }
+    case SEND_MESSAGE_ERROR:
+      return { ...state, sendError: true };
     default:
       return state;
   }
