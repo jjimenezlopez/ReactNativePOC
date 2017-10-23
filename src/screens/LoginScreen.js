@@ -9,7 +9,6 @@ import * as actions from '../actions';
 class LoginScreen extends Component {
   state = {
     username: '',
-    avatar: '',
     errorUsernameRequired: false
   };
 
@@ -18,7 +17,6 @@ class LoginScreen extends Component {
     try {
       await this.props.login();
       this.props.setUserName(this.state.username);
-      this.props.setUserAvatar(this.state.avatar);
       const navigateAction = NavigationActions.reset({
         index: 0,
         actions: [NavigationActions.navigate({ routeName: 'recording' })]
@@ -59,8 +57,6 @@ class LoginScreen extends Component {
           <FormLabel>Tell me your name</FormLabel>
           <FormInput onChangeText={(username) => { this.setState({ username }); }} />
           {this.showUsernameRequired()}
-          <FormLabel>Give me your avatar's URL</FormLabel>
-          <FormInput onChangeText={(avatar) => { this.setState({ avatar }); }} />
           {this.renderLoginButton()}
         </View>
       </View>
@@ -75,7 +71,7 @@ const styles = {
 };
 
 const mapStateToProps = ({ user, firebase }) => (
-  { username: user.name, avatar: user.avatar, authorizing: firebase.authorizing, uid: user.id }
+  { username: user.name, authorizing: firebase.authorizing, uid: user.id }
 );
 
 export default connect(mapStateToProps, actions)(LoginScreen);

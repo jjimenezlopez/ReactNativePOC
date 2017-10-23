@@ -2,16 +2,13 @@ import { AsyncStorage } from 'react-native';
 
 import {
   SET_USER_NAME,
-  SET_USER_AVATAR,
   GET_USER_ID,
-  GET_USER_NAME,
-  GET_USER_AVATAR
+  GET_USER_NAME
 } from './types';
 
 import {
   USER_UID,
-  USER_NAME,
-  USER_AVATAR
+  USER_NAME
 } from '../constants';
 
 export const setUserName = (name) => async (dispatch) => {
@@ -22,22 +19,9 @@ export const setUserName = (name) => async (dispatch) => {
   });
 };
 
-export const setUserAvatar = (avatar) => async (dispatch) => {
-  await AsyncStorage.setItem(USER_AVATAR, avatar);
-  dispatch({
-    type: SET_USER_AVATAR,
-    payload: { avatar }
-  });
-};
-
 export const getUserName = () => async dispatch => {
   const name = await AsyncStorage.getItem(USER_NAME);
   dispatch({ type: GET_USER_NAME, payload: { name } });
-};
-
-export const getUserAvatar = () => async dispatch => {
-  const avatar = await AsyncStorage.getItem(USER_AVATAR);
-  dispatch({ type: GET_USER_AVATAR, payload: { avatar } });
 };
 
 export const getUserID = () => async dispatch => {
