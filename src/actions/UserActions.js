@@ -3,7 +3,8 @@ import { AsyncStorage } from 'react-native';
 import {
   SET_USER_NAME,
   GET_USER_ID,
-  GET_USER_NAME
+  GET_USER_NAME,
+  GET_USER_DATA
 } from './types';
 
 import {
@@ -17,6 +18,12 @@ export const setUserName = (name) => async (dispatch) => {
     type: SET_USER_NAME,
     payload: { name }
   });
+};
+
+export const getUserData = () => async dispatch => {
+  const name = await AsyncStorage.getItem(USER_NAME);
+  const id = await AsyncStorage.getItem(USER_UID);
+  dispatch({ type: GET_USER_DATA, payload: { name, id } });
 };
 
 export const getUserName = () => async dispatch => {

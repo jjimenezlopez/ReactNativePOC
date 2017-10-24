@@ -3,6 +3,7 @@ export const UPLOAD_RECORDING_FAILED = 'upload_recording_failed';
 export const SET_USER_NAME = 'set_user_name';
 export const GET_USER_ID = 'get_user_id';
 export const GET_USER_NAME = 'get_user_name';
+export const GET_USER_DATA = 'get_user_data';
 export const USER_START_AUTHORIZING = 'user_start_authorizing';
 export const USER_AUTHORIZED = 'user_authorized';
 export const USER_AUTHORIZATION_ERROR = 'user_authorization_error';

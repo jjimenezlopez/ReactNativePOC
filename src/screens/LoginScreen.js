@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
-import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import { FormLabel, FormInput, FormValidationMessage, Button } from 'react-native-elements';
 
 import * as actions from '../actions';
 
 class LoginScreen extends Component {
+  static navigatorStyle = {
+    navBarHidden: true
+  };
+
   state = {
     username: '',
     errorUsernameRequired: false
@@ -17,12 +20,11 @@ class LoginScreen extends Component {
     try {
       await this.props.login();
       this.props.setUserName(this.state.username);
-      const navigateAction = NavigationActions.reset({
-        index: 0,
-        actions: [NavigationActions.navigate({ routeName: 'recording' })]
+      this.props.navigator.resetTo({
+        screen: 'ReactNativePOC.ChatScreen',
+        title: 'Chat',
+        animated: true
       });
-
-      this.props.navigation.dispatch(navigateAction);
     } catch (error) {
       console.error(error);
     }

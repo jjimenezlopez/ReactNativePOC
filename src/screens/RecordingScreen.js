@@ -1,7 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
-import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import Sound from 'react-native-sound';
 import AudioRecording from '../components/AudioRecording';
@@ -83,12 +82,12 @@ class RecordingScreen extends React.Component {
 
   async logout() {
     await this.props.logout();
-    const navigateAction = NavigationActions.reset({
-      index: 0,
-      actions: [NavigationActions.navigate({ routeName: 'login' })]
-    });
-
-    this.props.navigation.dispatch(navigateAction);
+    // const navigateAction = NavigationActions.reset({
+    //   index: 0,
+    //   actions: [NavigationActions.navigate({ routeName: 'login' })]
+    // });
+    // 
+    // this.props.navigation.dispatch(navigateAction);
   }
 
   renderBigMic = () => {
