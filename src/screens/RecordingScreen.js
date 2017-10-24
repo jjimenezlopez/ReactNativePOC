@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
-import { Button, Icon } from 'react-native-elements';
+import { StyleSheet, Text, View, ActivityIndicator, TouchableWithoutFeedback } from 'react-native';
+import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
 import Sound from 'react-native-sound';
 import AudioRecording from '../components/AudioRecording';
@@ -9,17 +9,21 @@ import { AUDIO_PATH } from '../constants';
 import * as actions from '../actions';
 
 class RecordingScreen extends React.Component {
+  static navigatorStyle = {
+    navBarHidden: true
+  };
+
   state = {
     recording: false,
     sending: false,
-    playing: false,
     filename: '',
     duration: 0
   };
 
+
   async componentDidMount() {
     Sound.setCategory('Playback');
-    this.props.getUserName();
+    this.props.getUserData();
   }
 
   onRecording = () => {
@@ -46,19 +50,21 @@ class RecordingScreen extends React.Component {
       console.log(`sound loaded: ${this.sound.getDuration()}`);
     });
 
-
     await this.props.uploadRecording(filename);
     await this.sendMessage(filename);
     this.setState({ sending: false });
+    this.dismissModal();
   }
 
   async sendMessage(filename) {
     const message = {
       user: {
-        name: this.props.username,
+        _id: this.props.id,
+        name: this.props.username
       },
+      type: 'audio',
       filename,
-      timestamp: Date.now()
+      createdAt: new Date()
     };
     await this.props.sendMessage(message);
   }
@@ -67,6 +73,7 @@ class RecordingScreen extends React.Component {
     return `${Math.floor(seconds / 60)}:${('0' + seconds % 60).slice(-2)}`; // eslint-disable-line
   }
 
+  // deprecated
   playRecording = async () => {
     this.setState({ playing: true });
 
@@ -80,14 +87,8 @@ class RecordingScreen extends React.Component {
     });
   }
 
-  async logout() {
-    await this.props.logout();
-    // const navigateAction = NavigationActions.reset({
-    //   index: 0,
-    //   actions: [NavigationActions.navigate({ routeName: 'login' })]
-    // });
-    // 
-    // this.props.navigation.dispatch(navigateAction);
+  dismissModal() {
+    this.props.navigator.dismissModal();
   }
 
   renderBigMic = () => {
@@ -97,22 +98,6 @@ class RecordingScreen extends React.Component {
           <Icon name='mic' size={220} color='#adadad' />
           <Text style={{ color: '#adadad', fontSize: 18 }}>Habla ahora...</Text>
         </View>
-      );
-    }
-  }
-
-  renderPlayButton() {
-    if (this.state.filename && !this.state.recording && !this.state.sending) {
-      return (
-        <Button
-          large
-          raised
-          disabled={this.state.playing}
-          backgroundColor='#517fa4'
-          title={`Reproducir (${this.state.duration})`}
-          onPress={this.playRecording}
-          icon={{ name: 'play-arrow' }}
-        />
       );
     }
   }
@@ -128,24 +113,15 @@ class RecordingScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <View style={styles.loginInfo}>
-          <View style={{ flexDirection: 'row', flex: 1 }}>
-            <View style={{ flex: 1, alignItems: 'center' }}>
-              <Text>You're logged in as {this.props.username}</Text>
+        <View style={styles.headerView}>
+          <TouchableWithoutFeedback onPress={this.dismissModal.bind(this)}>
+            <View>
+              <Text style={styles.cancelLink}>Cancel</Text>
             </View>
-            <View style={{ flex: -1, marginRight: 10 }}>
-              <Icon
-                name='exit-to-app'
-                color='#517fa4'
-                size={32}
-                onPress={this.logout.bind(this)}
-              />
-            </View>
-          </View>
+          </TouchableWithoutFeedback>
         </View>
         <View style={styles.topView}>
           {this.renderBigMic()}
-          {this.renderPlayButton()}
           {this.renderSending()}
         </View>
         <View style={styles.bottomView}>
@@ -167,9 +143,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  loginInfo: { marginTop: 30, flex: 1, flexDirection: 'row' },
+  headerView: {
+    flex: 1,
+    alignSelf: 'stretch',
+    alignItems: 'flex-end',
+    marginTop: 25,
+    marginRight: 30
+  },
+  cancelLink: {
+    fontSize: 16,
+    color: '#007AFF'
+  },
   topView: {
-    flex: 2,
+    flex: 3,
     justifyContent: 'center',
     alignItems: 'center'
   },

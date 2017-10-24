@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View, ActivityIndicator } from 'react-native';
-import { GiftedChat } from 'react-native-gifted-chat';
+import { GiftedChat, Actions, Bubble } from 'react-native-gifted-chat';
 import * as actions from '../actions';
 
 class ChatScreen extends Component {
@@ -59,13 +59,44 @@ class ChatScreen extends Component {
         _id: this.props.id,
         name: this.props.name
       },
+      type: 'text',
       text,
-      timestamp: Date.now(),
       createdAt: new Date()
     };
 
-    console.log(message);
     await this.props.sendMessage(message);
+  }
+
+  renderCustomActions(props) {
+    const options = {
+      'Send audio': () => {
+        this.props.navigator.showModal({
+          screen: 'ReactNativePOC.RecordingScreen',
+          title: 'Audio recording'
+        });
+      },
+      Cancel: () => {},
+    };
+
+    return (
+      <Actions
+        {...props}
+        options={options}
+      />
+    );
+  }
+
+  renderBubble(props) {
+    return (
+      <Bubble
+        {...props}
+        wrapperStyle={{
+          left: {
+            backgroundColor: '#f0f0f0',
+          }
+        }}
+      />
+    );
   }
 
   render() {
@@ -81,6 +112,7 @@ class ChatScreen extends Component {
       <GiftedChat
         messages={this.props.messages}
         onSend={(messages) => this.sendMessage(messages)}
+        renderActions={this.renderCustomActions.bind(this)}
         user={{
           _id: this.props.id,
         }}
