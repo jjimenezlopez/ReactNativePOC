@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import * as actions from '../actions';
 
-import RecordingScreen from './RecordingScreen';
+import ChatScreen from './ChatScreen';
 import LoginScreen from './LoginScreen';
 
 
@@ -24,7 +24,7 @@ class InitialScreen extends Component {
       return <LoginScreen navigation={this.props.navigation} />;
     }
 
-    return <RecordingScreen navigation={this.props.navigation} />;
+    return <ChatScreen navigation={this.props.navigation} />;
   }
 
   render() {

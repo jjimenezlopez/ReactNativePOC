@@ -21,7 +21,6 @@ class RecordingScreen extends React.Component {
   async componentDidMount() {
     Sound.setCategory('Playback');
     this.props.getUserName();
-    this.props.fetchMessages();
   }
 
   onRecording = () => {
@@ -184,16 +183,14 @@ const styles = StyleSheet.create({
   infoText: { marginBottom: 10 }
 });
 
-const mapStateToProps = (state) => {
-  console.log(state);
-
-  return {
+const mapStateToProps = (state) => (
+  {
     username: state.user.name,
     authorized: state.user.authorized,
     id: state.user.id,
     loading: state.firebase.loading,
     messages: state.firebase.messages
-  };
-};
+  }
+);
 
 export default connect(mapStateToProps, actions)(RecordingScreen);

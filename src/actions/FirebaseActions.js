@@ -82,11 +82,12 @@ export const fetchMessages = () => async dispatch => {
     dispatch({ type: START_MESSAGES_FETCH });
     firebase.database().ref('messages')
       .orderByKey()
+      .limitToLast(20)
       .on('value', (snapshot) => {
         const messagesObject = snapshot.val();
         const messages = !_.isNull(messagesObject) ? Object.keys(messagesObject)
           .map((key, index) => ({ ...messagesObject[key], _id: index })) : [];
-        dispatch({ type: END_MESSAGES_FETCH, payload: { messages } });
+        dispatch({ type: END_MESSAGES_FETCH, payload: { messages: messages.reverse() } });
       });
   } catch (error) {
     console.error(error);

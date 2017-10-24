@@ -9,6 +9,7 @@ import reducers from './src/reducers';
 import InitialScreen from './src/screens/InitialScreen';
 import RecordingScreen from './src/screens/RecordingScreen';
 import LoginScreen from './src/screens/LoginScreen';
+import ChatScreen from './src/screens/ChatScreen';
 
 export default class App extends React.Component {
 
@@ -16,7 +17,8 @@ export default class App extends React.Component {
     const MainNavigator = StackNavigator({
       initial: { screen: InitialScreen },
       login: { screen: LoginScreen },
-      recording: { screen: RecordingScreen }
+      recording: { screen: RecordingScreen },
+      chat: { screen: ChatScreen }
     }, {
       headerMode: 'none'
     });

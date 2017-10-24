@@ -4302,9 +4302,9 @@ react-devtools-core@^2.5.0:
     shell-quote "^1.6.1"
     ws "^2.0.3"
 
-react-native-audio@^3.2.2:
+"react-native-audio@https://github.com/Noitidart/react-native-audio.git#patch-1":
   version "3.2.2"
-  resolved "https://registry.yarnpkg.com/react-native-audio/-/react-native-audio-3.2.2.tgz#0fcbda338c9cc85aabed595f9c762fa6eebbdb88"
+  resolved "https://github.com/Noitidart/react-native-audio.git#3e1aa72594e5e5f122257366b079d5ac37312332"
 
 react-native-branch@2.0.0-beta.3:
   version "2.0.0-beta.3"
