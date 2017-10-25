@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View, ActivityIndicator } from 'react-native';
-import { GiftedChat, Actions, Bubble } from 'react-native-gifted-chat';
+import { GiftedChat, Actions } from 'react-native-gifted-chat';
+import CustomView from '../components/CustomView';
 import * as actions from '../actions';
+
 
 class ChatScreen extends Component {
   static navigatorButtons = {
@@ -61,7 +63,7 @@ class ChatScreen extends Component {
       },
       type: 'text',
       text,
-      createdAt: new Date()
+      createdAt: new Date().getTime()
     };
 
     await this.props.sendMessage(message);
@@ -86,15 +88,10 @@ class ChatScreen extends Component {
     );
   }
 
-  renderBubble(props) {
+  renderCustomView(props) {
     return (
-      <Bubble
+      <CustomView
         {...props}
-        wrapperStyle={{
-          left: {
-            backgroundColor: '#f0f0f0',
-          }
-        }}
       />
     );
   }
@@ -113,6 +110,7 @@ class ChatScreen extends Component {
         messages={this.props.messages}
         onSend={(messages) => this.sendMessage(messages)}
         renderActions={this.renderCustomActions.bind(this)}
+        renderCustomView={this.renderCustomView}
         user={{
           _id: this.props.id,
         }}

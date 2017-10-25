@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import Sound from 'react-native-sound';
 import AudioRecording from '../components/AudioRecording';
 
-import { AUDIO_PATH } from '../constants';
 import * as actions from '../actions';
 
 class RecordingScreen extends React.Component {
@@ -37,54 +36,28 @@ class RecordingScreen extends React.Component {
       filename
     });
 
-    if (this.sound) {
-      this.sound.release();
-    }
-
-    this.sound = new Sound(this.state.filename, AUDIO_PATH, (error) => {
-      if (error) {
-        console.error(error);
-      }
-
-      this.setState({ duration: this.formatSeconds(Math.floor(this.sound.getDuration())) });
-      console.log(`sound loaded: ${this.sound.getDuration()}`);
-    });
-
     await this.props.uploadRecording(filename);
-    await this.sendMessage(filename);
+    await this.sendMessage(this.props.audioUrl, this.props.audioFilename);
     this.setState({ sending: false });
     this.dismissModal();
   }
 
-  async sendMessage(filename) {
+  async sendMessage(audioUrl, audioFilename) {
     const message = {
       user: {
         _id: this.props.id,
         name: this.props.username
       },
       type: 'audio',
-      filename,
-      createdAt: new Date()
+      audioUrl,
+      audioFilename,
+      createdAt: new Date().getTime()
     };
     await this.props.sendMessage(message);
   }
 
   formatSeconds(seconds) {
     return `${Math.floor(seconds / 60)}:${('0' + seconds % 60).slice(-2)}`; // eslint-disable-line
-  }
-
-  // deprecated
-  playRecording = async () => {
-    this.setState({ playing: true });
-
-    this.sound.play((success) => {
-      if (success) {
-        console.log('successfully finished playing');
-        this.setState({ playing: false });
-      } else {
-        console.log('playback failed due to audio decoding errors');
-      }
-    });
   }
 
   dismissModal() {
@@ -174,7 +147,9 @@ const mapStateToProps = (state) => (
     authorized: state.user.authorized,
     id: state.user.id,
     loading: state.firebase.loading,
-    messages: state.firebase.messages
+    messages: state.firebase.messages,
+    audioUrl: state.firebase.audioUrl,
+    audioFilename: state.firebase.audioFilename
   }
 );
 

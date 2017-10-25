@@ -1,5 +1,5 @@
 import {
-  // UPLOAD_RECORDING_SUCCESS,
+  UPLOAD_RECORDING_SUCCESS,
   // UPLOAD_RECORDING_FAILED
   USER_START_AUTHORIZING,
   USER_AUTHORIZED,
@@ -15,8 +15,10 @@ const INITIAL_STATE = {};
 
 export default function (state = INITIAL_STATE, action) {
   switch (action.type) {
-    // case UPLOAD_RECORDING_SUCCESS:
-    //   return action.payload;
+    case UPLOAD_RECORDING_SUCCESS: {
+      const { audioUrl, audioFilename } = action.payload;
+      return { ...state, audioUrl, audioFilename };
+    }
     // case UPLOAD_RECORDING_FAILED:
     //   return action.payload;
     case USER_START_AUTHORIZING:

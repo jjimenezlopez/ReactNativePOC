@@ -52,10 +52,12 @@ export const uploadRecording = (filename) => async (dispatch) => {
     await audioRef.put(blob, { contentType: AAC_MIME });
 
     blob.close();
-    const downloadUrl = await audioRef.getDownloadURL();
+    const metadata = await audioRef.getMetadata();
+    const audioUrl = await audioRef.getDownloadURL();
+    const audioFilename = await metadata.name;
 
-    dispatch({ type: UPLOAD_RECORDING_SUCCESS });
-    console.log(`audio uploaded: ${downloadUrl}`);
+    dispatch({ type: UPLOAD_RECORDING_SUCCESS, payload: { audioUrl, audioFilename } });
+    console.log(`audio uploaded: ${audioUrl}`);
   } catch (e) {
     console.error(e);
     console.log('audio not uploaded!');
