@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { View, ActivityIndicator } from 'react-native';
-import { GiftedChat, Actions } from 'react-native-gifted-chat';
+import { View, Text, ActivityIndicator } from 'react-native';
+import { GiftedChat, Actions, Bubble } from 'react-native-gifted-chat';
 import CustomView from '../components/CustomView';
 import * as actions from '../actions';
 
@@ -96,6 +96,33 @@ class ChatScreen extends Component {
     );
   }
 
+  renderUsername(currentMessage) {
+    if (currentMessage.user._id !== this.props.id) { // eslint-disable-line
+      return <Text style={styles.username}>{currentMessage.user.name}</Text>;
+    }
+
+    return null;
+  }
+
+  renderBubble(props) {
+    if (props.isSameUser(props.currentMessage, props.previousMessage) && props.isSameDay(props.currentMessage, props.previousMessage)) {
+      return (
+        <Bubble
+          {...props}
+        />
+      );
+    }
+
+    return (
+      <View>
+        {this.renderUsername(props.currentMessage)}
+        <Bubble
+          {...props}
+        />
+      </View>
+    );
+  }
+
   render() {
     if (this.props.loading) {
       return (
@@ -111,6 +138,7 @@ class ChatScreen extends Component {
         onSend={(messages) => this.sendMessage(messages)}
         renderActions={this.renderCustomActions.bind(this)}
         renderCustomView={this.renderCustomView}
+        renderBubble={this.renderBubble.bind(this)}
         user={{
           _id: this.props.id,
         }}
@@ -118,6 +146,12 @@ class ChatScreen extends Component {
     );
   }
 }
+
+const styles = {
+  username: {
+    color: 'grey'
+  }
+};
 
 const mapStateToProps = (state) => {
   const { messages, loading } = state.firebase;
