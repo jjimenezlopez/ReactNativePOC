@@ -1,4 +1,4 @@
-package com.reactnativepoc;
+package info.josejimenez.reactnativepoc;
 
 import com.facebook.react.ReactActivity;
 import com.reactnativenavigation.controllers.SplashActivity;

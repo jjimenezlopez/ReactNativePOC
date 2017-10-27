@@ -1,4 +1,5 @@
 apply plugin: "com.android.application"
+apply plugin: 'com.google.gms.google-services'
 
 import com.android.build.OutputFile
 
@@ -98,7 +99,7 @@ android {
     buildToolsVersion "25.0.1"
 
     defaultConfig {
-        applicationId "com.reactnativepoc"
+        applicationId "info.josejimenez.reactnativepoc"
         minSdkVersion 16
         targetSdkVersion 22
         versionCode 1
@@ -149,6 +150,7 @@ android {
 
 dependencies {
     compile project(':react-native-fcm')
+    compile 'com.google.firebase:firebase-core:10.0.1' //this decides your firebase SDK version
     compile project(':react-native-sound')
     compile project(':react-native-vector-icons')
     compile project(':react-native-fetch-blob')

@@ -1,4 +1,4 @@
-package com.reactnativepoc;
+package info.josejimenez.reactnativepoc;
 
 import android.app.Application;
 
