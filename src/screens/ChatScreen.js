@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { View, Text, ActivityIndicator } from 'react-native';
+import { View, Text, ActivityIndicator, Platform } from 'react-native';
 import { GiftedChat, Actions, Bubble } from 'react-native-gifted-chat';
 import CustomView from '../components/CustomView';
 import * as actions from '../actions';
@@ -10,7 +10,7 @@ class ChatScreen extends Component {
   static navigatorButtons = {
     rightButtons: [
       {
-        title: 'Logout', // for a textual button, provide the button title (label)
+        title: 'Logout',
         id: 'logout'
       }
     ]
@@ -20,9 +20,9 @@ class ChatScreen extends Component {
     navBarHidden: false,
     statusBarColor: '#36648B',
     statusBarTextColorScheme: 'light',
-    navBarBackgroundColor: '#517fa4',
-    navBarTextColor: 'white',
-    navBarButtonColor: 'white',
+    navBarBackgroundColor: Platform.OS === 'ios' ? '#f7f7f7' : '#517fa4',
+    navBarTextColor: Platform.OS === 'ios' ? '#000000' : '#ffffff',
+    navBarButtonColor: Platform.OS === 'ios' ? '#007aff' : '#ffffff',
     topBarElevationShadowEnabled: true,
     navBarHideOnScroll: false
   };
@@ -127,7 +127,7 @@ class ChatScreen extends Component {
     if (this.props.loading) {
       return (
         <View style={{ flex: 1, justifyContent: 'center' }}>
-          <ActivityIndicator />
+          <ActivityIndicator size='large' />
         </View>
       );
     }
