@@ -11,6 +11,7 @@ import {
   NOTIFICATIONS_TOPIC
 } from '../constants';
 
+// confic code in repository
 const config = {
   apiKey: 'test',
   authDomain: 'test',
@@ -25,6 +26,7 @@ firebase.initializeApp(config);
 firebase.auth().onAuthStateChanged(async (user) => {
   if (user) {
     await AsyncStorage.setItem(USER_UID, user.uid);
+    getFCMToken(user.uid);
     subscribeForNotifications();
     registerNotificationEvents();
   } else {
@@ -33,14 +35,26 @@ firebase.auth().onAuthStateChanged(async (user) => {
   }
 });
 
+const getFCMToken = async (userId) => {
+  const token = await FCM.getFCMToken();
+  saveToken(userId, token);
+
+  FCM.on(FCMEvent.RefreshToken, newToken => {
+    saveToken(userId, newToken);
+  });
+};
+
+const saveToken = async (userId, token) => {
+  const platform = Platform.OS;
+  const data = { platform, token };
+
+  firebase.database().ref(`users/${userId}/`).set(data);
+};
+
 const subscribeForNotifications = () => {
   try {
     FCM.requestPermissions();
     FCM.subscribeToTopic(NOTIFICATIONS_TOPIC);
-
-    FCM.on(FCMEvent.RefreshToken, newToken => {
-      console.log(newToken);
-    });
   } catch (error) {
     console.error(error);
   }
@@ -70,8 +84,6 @@ const registerNotificationEvents = () => {
         case NotificationType.WillPresent:
           notif.finish(WillPresentNotificationResult.All); //other types available: WillPresentNotificationResult.None
           break;
-        default:
-          notif.finish();
       }
     }
   });
