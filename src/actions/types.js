@@ -13,3 +13,5 @@ export const SEND_MESSAGE_ERROR = 'send_message_error';
 export const START_MESSAGES_FETCH = 'start_messages_fetch';
 export const END_MESSAGES_FETCH = 'end_messages_fetch';
 export const FETCH_MESSAGES_ERROR = 'fetch_messages_error';
+export const NEW_MESSAGE = 'new_message';
+export const NO_MORE_MESSAGES = 'no_more_messages';

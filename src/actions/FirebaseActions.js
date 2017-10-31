@@ -14,7 +14,10 @@ import {
   SEND_MESSAGE_ERROR,
   START_MESSAGES_FETCH,
   END_MESSAGES_FETCH,
-  FETCH_MESSAGES_ERROR
+  FETCH_MESSAGES_ERROR,
+  NEW_MESSAGE,
+  NEW_MESSAGE_ERROR,
+  NO_MORE_MESSAGES
 } from './types';
 
 import { AUDIO_PATH } from '../constants';
@@ -79,21 +82,63 @@ export const sendMessage = (message) => async dispatch => {
   }
 };
 
-export const fetchMessages = () => async dispatch => {
+export const fetchMessages = (lastId) => async dispatch => {
   try {
-    dispatch({ type: START_MESSAGES_FETCH });
-    firebase.database().ref('messages')
-      .orderByKey()
-      .limitToLast(20)
-      .on('value', (snapshot) => {
+    let ref = firebase.database().ref('messages').orderByKey();
+
+    if (!lastId) {
+      // Used to show loading spinner when no previous messages
+      dispatch({ type: START_MESSAGES_FETCH });
+    }
+
+    if (lastId) {
+      ref = ref.endAt(lastId);
+    }
+
+    ref.limitToLast(20)
+      .once('value', (snapshot) => {
         const messagesObject = snapshot.val();
         const messages = !_.isNull(messagesObject) ? Object.keys(messagesObject)
-          .map((key, index) => ({ ...messagesObject[key], _id: index })) : [];
-        dispatch({ type: END_MESSAGES_FETCH, payload: { messages: messages.reverse() } });
+          .map((key) => ({ ...messagesObject[key], _id: key, key })) : [];
+
+        if (lastId) {
+          messages.pop();
+        }
+
+        if (messages.length) {
+          dispatch({ type: END_MESSAGES_FETCH, payload: { messages: messages.reverse() } });
+        }
+
+        if (!messages.length || messages.length < 19) {
+          dispatch({ type: NO_MORE_MESSAGES });
+        }
       });
   } catch (error) {
     console.error(error);
     dispatch({ type: FETCH_MESSAGES_ERROR });
+  }
+};
+
+export const listenMessages = () => async dispatch => {
+  try {
+    firebase.database().ref('messages').orderByChild('createdAt').startAt(Date.now())
+      .on('child_added', (child) => {
+        console.log('New message received');
+        const newMessage = child.val();
+        newMessage._id = child.key; // eslint-disable-line
+        dispatch({ type: NEW_MESSAGE, payload: { newMessage } });
+      });
+  } catch (error) {
+    console.error(error);
+    dispatch({ type: NEW_MESSAGE_ERROR });
+  }
+};
+
+export const disconnectListenMessages = () => {
+  try {
+    firebase.database().ref('messages').off('child_added');
+  } catch (error) {
+    console.log(error);
   }
 };
 

@@ -29,6 +29,10 @@ class ChatScreen extends Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      isLoadingEarlier: false
+    };
+
     // if you want to listen on navigator events, set this up
     this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent.bind(this));
   }
@@ -38,12 +42,26 @@ class ChatScreen extends Component {
     this.props.fetchMessages();
   }
 
+  componentDidMount() {
+    this.props.listenMessages();
+  }
+
+  componentWillUnmount() {
+    this.props.disconnectListenMessages();
+  }
+
   onNavigatorEvent(event) { // this is the onPress handler for the two buttons together
     if (event.type === 'NavBarButtonPress') { // this is the event type for button presses
       if (event.id === 'logout') { // this is the same id field from the static navigatorButtons definition
         this.logout();
       }
     }
+  }
+
+  async onLoadEarlier() {
+    this.setState({ isLoadingEarlier: true });
+    await this.props.fetchMessages(this.props.messages[this.props.messages.length - 1].key);
+    setTimeout(() => { this.setState({ isLoadingEarlier: false }); }, 500);
   }
 
   async logout() {
@@ -136,6 +154,9 @@ class ChatScreen extends Component {
       <GiftedChat
         messages={this.props.messages}
         onSend={(messages) => this.sendMessage(messages)}
+        loadEarlier={this.props.loadEarlier}
+        onLoadEarlier={this.onLoadEarlier.bind(this)}
+        isLoadingEarlier={this.state.isLoadingEarlier}
         renderActions={this.renderCustomActions.bind(this)}
         renderCustomView={this.renderCustomView}
         renderBubble={this.renderBubble.bind(this)}
@@ -154,9 +175,9 @@ const styles = {
 };
 
 const mapStateToProps = (state) => {
-  const { messages, loading } = state.firebase;
+  const { messages, loading, loadEarlier } = state.firebase;
   const { name, id, authorized } = state.user;
-  return { messages, id, name, authorized, loading };
+  return { messages, id, name, authorized, loading, loadEarlier };
 };
 
 export default connect(mapStateToProps, actions)(ChatScreen);

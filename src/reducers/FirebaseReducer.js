@@ -8,10 +8,15 @@ import {
   MESSAGE_SENT,
   SEND_MESSAGE_ERROR,
   START_MESSAGES_FETCH,
-  END_MESSAGES_FETCH
+  END_MESSAGES_FETCH,
+  NEW_MESSAGE,
+  NO_MORE_MESSAGES
 } from '../actions/types';
 
-const INITIAL_STATE = {};
+const INITIAL_STATE = {
+  loadEarlier: true,
+  messages: []
+};
 
 export default function (state = INITIAL_STATE, action) {
   switch (action.type) {
@@ -19,10 +24,7 @@ export default function (state = INITIAL_STATE, action) {
       const { audioUrl, audioFilename } = action.payload;
       return { ...state, audioUrl, audioFilename };
     }
-    // case UPLOAD_RECORDING_FAILED:
-    //   return action.payload;
     case USER_START_AUTHORIZING:
-      console.log('authorizing');
       return { ...state, authorizing: true };
     case USER_AUTHORIZED:
       return { ...state, authorizing: false, authorized: true };
@@ -40,8 +42,15 @@ export default function (state = INITIAL_STATE, action) {
       return { ...state, loading: true };
     case END_MESSAGES_FETCH: {
       const { messages } = action.payload;
-      return { ...state, loading: false, messages };
+      return { ...state, loading: false, messages: [...state.messages, ...messages] };
     }
+    case NEW_MESSAGE: {
+      const { newMessage } = action.payload;
+
+      return { ...state, messages: [newMessage, ...state.messages] };
+    }
+    case NO_MORE_MESSAGES:
+      return { ...state, loadEarlier: false };
     default:
       return state;
   }
