@@ -1,6 +1,7 @@
 /* globals window */
 import _ from 'lodash';
 import RNFetchBlob from 'react-native-fetch-blob';
+import { LoginManager, AccessToken } from 'react-native-fbsdk';
 import firebase from '../services/firebase';
 
 import {
@@ -17,7 +18,10 @@ import {
   FETCH_MESSAGES_ERROR,
   NEW_MESSAGE,
   NEW_MESSAGE_ERROR,
-  NO_MORE_MESSAGES
+  NO_MORE_MESSAGES,
+  DISCONNECTED_LISTENING_MESSAGES,
+  FB_LOGIN_SUCCESS,
+  FB_LOGIN_CANCELED
 } from './types';
 
 import { AUDIO_PATH } from '../constants';
@@ -134,9 +138,10 @@ export const listenMessages = () => async dispatch => {
   }
 };
 
-export const disconnectListenMessages = () => {
+export const disconnectListenMessages = () => dispatch => {
   try {
     firebase.database().ref('messages').off('child_added');
+    dispatch({ type: DISCONNECTED_LISTENING_MESSAGES });
   } catch (error) {
     console.log(error);
   }
@@ -152,6 +157,25 @@ export const login = () => async dispatch => {
   } catch (error) {
     console.log(error);
     dispatch({ type: USER_AUTHORIZATION_ERROR });
+  }
+};
+
+export const loginWithFacebook = () => async dispatch => {
+  try {
+    dispatch({ type: USER_START_AUTHORIZING });
+    const result = await LoginManager.logInWithReadPermissions(['public_profile', 'email']);
+    if (result.isCancelled) {
+      console.log('login canceled');
+      dispatch({ type: FB_LOGIN_CANCELED });
+    } else {
+      console.log('Login success');
+      const accessTokenData = await AccessToken.getCurrentAccessToken();
+      const credential = firebase.auth.FacebookAuthProvider.credential(accessTokenData.accessToken);
+      firebase.auth().signInWithCredential(credential);
+      dispatch({ type: FB_LOGIN_SUCCESS });
+    }
+  } catch (error) {
+      console.error(error);
   }
 };
 

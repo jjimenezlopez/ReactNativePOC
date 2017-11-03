@@ -10,7 +10,9 @@ import {
   START_MESSAGES_FETCH,
   END_MESSAGES_FETCH,
   NEW_MESSAGE,
-  NO_MORE_MESSAGES
+  NO_MORE_MESSAGES,
+  FB_LOGIN_SUCCESS,
+  FB_LOGIN_CANCELED
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -51,6 +53,10 @@ export default function (state = INITIAL_STATE, action) {
     }
     case NO_MORE_MESSAGES:
       return { ...state, loadEarlier: false };
+    case FB_LOGIN_SUCCESS:
+      return { ...state, authorizing: false, authorized: true };
+    case FB_LOGIN_CANCELED:
+      return { ...state, autherror: true };
     default:
       return state;
   }

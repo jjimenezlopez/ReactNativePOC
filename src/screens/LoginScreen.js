@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, Alert } from 'react-native';
 import { connect } from 'react-redux';
-import { FormLabel, FormInput, FormValidationMessage, Button } from 'react-native-elements';
-
+import { FormLabel, FormInput, FormValidationMessage, Button, SocialIcon } from 'react-native-elements';
 import * as actions from '../actions';
 
 class LoginScreen extends Component {
@@ -27,6 +26,24 @@ class LoginScreen extends Component {
       });
     } catch (error) {
       console.error(error);
+    }
+  }
+
+  async loginWithFacebook() {
+    try {
+      await this.props.loginWithFacebook();
+      if (this.props.authorized) {
+        await this.props.getUserFBData();
+        this.props.setUserName(this.props.fbinfo.name);
+        this.props.navigator.resetTo({
+          screen: 'ReactNativePOC.ChatScreen',
+          title: 'Chat',
+          animated: true
+        });
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Se ha producido un error en el proceso de login.');
+      console.log(error);
     }
   }
 
@@ -60,6 +77,13 @@ class LoginScreen extends Component {
           <FormInput onChangeText={(username) => { this.setState({ username }); }} />
           {this.showUsernameRequired()}
           {this.renderLoginButton()}
+          <SocialIcon
+            title={this.props.authorizing || this.props.requestingData ? 'Logging in...' : 'Sign In With Facebook'}
+            button
+            type='facebook'
+            disabled={this.props.authorizing || this.props.requestingData}
+            onPress={this.loginWithFacebook.bind(this)}
+          />
         </View>
       </View>
     );
@@ -73,7 +97,14 @@ const styles = {
 };
 
 const mapStateToProps = ({ user, firebase }) => (
-  { username: user.name, authorizing: firebase.authorizing, uid: user.id }
+  {
+    username: user.name,
+    authorizing: firebase.authorizing,
+    authorized: firebase.authorized,
+    uid: user.id,
+    fbinfo: user.fbinfo,
+    requestingData: user.requestingData
+  }
 );
 
 export default connect(mapStateToProps, actions)(LoginScreen);
