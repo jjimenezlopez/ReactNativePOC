@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ReactNativePOC</string>
+    <string name="facebook_app_id">my_api_key</string>
 </resources>
