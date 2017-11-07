@@ -1,6 +1,8 @@
 export const UPLOAD_RECORDING_SUCCESS = 'upload_recording_success';
 export const UPLOAD_RECORDING_FAILED = 'upload_recording_failed';
 export const SET_USER_NAME = 'set_user_name';
+export const SET_USER_AVATAR = 'set_user_avatar';
+export const SET_USER_DATA = 'set_user_data';
 export const GET_USER_ID = 'get_user_id';
 export const GET_USER_NAME = 'get_user_name';
 export const GET_USER_DATA = 'get_user_data';
@@ -21,3 +23,5 @@ export const FB_LOGIN_CANCELED = 'fb_login_canceled';
 export const FB_DATA_REQUESTED = 'fb_data_requested';
 export const FB_DATA_ERROR = 'fb_data_error';
 export const FB_DATA_REQUEST = 'fb_data_request';
+export const GOOGLE_LOGIN_SUCCESS = 'google_login_success';
+export const GOOGLE_LOGIN_CANCELED = 'google_login_canceled';

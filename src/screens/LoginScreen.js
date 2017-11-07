@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { View, Alert } from 'react-native';
 import { connect } from 'react-redux';
-import { FormLabel, FormInput, FormValidationMessage, Button, SocialIcon } from 'react-native-elements';
+import { FormValidationMessage, Button, SocialIcon } from 'react-native-elements';
+import { GoogleSigninButton } from 'react-native-google-signin';
 import * as actions from '../actions';
 
 class LoginScreen extends Component {
@@ -47,6 +48,23 @@ class LoginScreen extends Component {
     }
   }
 
+  async loginWithGoogle() {
+    try {
+      await this.props.loginWithGoogle();
+      if (this.props.authorized) {
+        this.props.setUserData(this.props.googleinfo);
+        this.props.navigator.resetTo({
+          screen: 'ReactNativePOC.ChatScreen',
+          title: 'Chat',
+          animated: true
+        });
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Se ha producido un error en el proceso de login.');
+      console.log(error);
+    }
+  }
+
   showUsernameRequired() {
     if (!this.state.errorUsernameRequired) {
       return;
@@ -73,16 +91,19 @@ class LoginScreen extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.form}>
-          <FormLabel>Tell me your name</FormLabel>
-          <FormInput onChangeText={(username) => { this.setState({ username }); }} />
-          {this.showUsernameRequired()}
-          {this.renderLoginButton()}
           <SocialIcon
-            title={this.props.authorizing || this.props.requestingData ? 'Logging in...' : 'Sign In With Facebook'}
+            title={this.props.authorizing || this.props.requestingData ? 'Signing in...' : 'Sign In With Facebook'}
             button
             type='facebook'
             disabled={this.props.authorizing || this.props.requestingData}
             onPress={this.loginWithFacebook.bind(this)}
+            style={styles.socialButton}
+          />
+          <GoogleSigninButton
+            style={{ width: 48, height: 48 }}
+            size={GoogleSigninButton.Size.Wide}
+            color={GoogleSigninButton.Color.Dark}
+            onPress={this.loginWithGoogle.bind(this)}
           />
         </View>
       </View>
@@ -93,7 +114,8 @@ class LoginScreen extends Component {
 const styles = {
   container: { justifyContent: 'center', flex: 1 },
   form: { justifyContent: 'center' },
-  button: { marginTop: 10 }
+  button: { marginTop: 10 },
+  socialButton: { marginTop: 10, marginLeft: 14, marginRight: 14 }
 };
 
 const mapStateToProps = ({ user, firebase }) => (
@@ -103,7 +125,8 @@ const mapStateToProps = ({ user, firebase }) => (
     authorized: firebase.authorized,
     uid: user.id,
     fbinfo: user.fbinfo,
-    requestingData: user.requestingData
+    requestingData: user.requestingData,
+    googleinfo: firebase.googleinfo
   }
 );
 

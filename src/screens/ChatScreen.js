@@ -77,7 +77,8 @@ class ChatScreen extends Component {
     const message = {
       user: {
         _id: this.props.id,
-        name: this.props.name
+        name: this.props.name,
+        avatar: this.props.avatar
       },
       type: 'text',
       text,
@@ -176,8 +177,8 @@ const styles = {
 
 const mapStateToProps = (state) => {
   const { messages, loading, loadEarlier } = state.firebase;
-  const { name, id, authorized } = state.user;
-  return { messages, id, name, authorized, loading, loadEarlier };
+  const { name, avatar, id, authorized } = state.user;
+  return { messages, id, name, avatar, authorized, loading, loadEarlier };
 };
 
 export default connect(mapStateToProps, actions)(ChatScreen);

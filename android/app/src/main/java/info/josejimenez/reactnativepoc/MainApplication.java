@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Intent;
 
 import com.facebook.react.ReactApplication;
+import co.apptailor.googlesignin.RNGoogleSigninPackage;
 import com.facebook.reactnative.androidsdk.FBSDKPackage;
 import com.evollu.react.fcm.FIRMessagingPackage;
 import com.reactnativenavigation.controllers.ActivityCallbacks;
@@ -60,6 +61,7 @@ public class MainApplication extends NavigationApplication {
     
     return Arrays.<ReactPackage>asList(
         new MainReactPackage(),
+        new RNGoogleSigninPackage(),
         new FBSDKPackage(mCallbackManager),
         new FIRMessagingPackage(),
         new RNSoundPackage(),

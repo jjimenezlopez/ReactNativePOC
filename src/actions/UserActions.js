@@ -3,6 +3,7 @@ import { GraphRequest, GraphRequestManager } from 'react-native-fbsdk';
 
 import {
   SET_USER_NAME,
+  SET_USER_DATA,
   GET_USER_ID,
   GET_USER_NAME,
   GET_USER_DATA,
@@ -13,7 +14,8 @@ import {
 
 import {
   USER_UID,
-  USER_NAME
+  USER_NAME,
+  USER_AVATAR
 } from '../constants';
 
 export const setUserName = (name) => async (dispatch) => {
@@ -21,6 +23,18 @@ export const setUserName = (name) => async (dispatch) => {
   dispatch({
     type: SET_USER_NAME,
     payload: { name }
+  });
+};
+
+export const setUserData = (data) => async (dispatch) => {
+  const { name, avatar } = data;
+
+  await AsyncStorage.setItem(USER_NAME, name);
+  await AsyncStorage.setItem(USER_AVATAR, avatar);
+
+  dispatch({
+    type: SET_USER_DATA,
+    payload: { name, avatar }
   });
 };
 

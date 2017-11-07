@@ -12,7 +12,9 @@ import {
   NEW_MESSAGE,
   NO_MORE_MESSAGES,
   FB_LOGIN_SUCCESS,
-  FB_LOGIN_CANCELED
+  FB_LOGIN_CANCELED,
+  GOOGLE_LOGIN_SUCCESS,
+  GOOGLE_LOGIN_CANCELED
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -56,6 +58,10 @@ export default function (state = INITIAL_STATE, action) {
     case FB_LOGIN_SUCCESS:
       return { ...state, authorizing: false, authorized: true };
     case FB_LOGIN_CANCELED:
+      return { ...state, autherror: true };
+    case GOOGLE_LOGIN_SUCCESS:
+      return { ...state, authorizing: false, authorized: true, googleinfo: { ...action.payload } };
+    case GOOGLE_LOGIN_CANCELED:
       return { ...state, autherror: true };
     default:
       return state;

@@ -2,6 +2,7 @@
 import _ from 'lodash';
 import RNFetchBlob from 'react-native-fetch-blob';
 import { LoginManager, AccessToken } from 'react-native-fbsdk';
+import { GoogleSignin } from 'react-native-google-signin';
 import firebase from '../services/firebase';
 
 import {
@@ -21,7 +22,9 @@ import {
   NO_MORE_MESSAGES,
   DISCONNECTED_LISTENING_MESSAGES,
   FB_LOGIN_SUCCESS,
-  FB_LOGIN_CANCELED
+  FB_LOGIN_CANCELED,
+  GOOGLE_LOGIN_SUCCESS,
+  GOOGLE_LOGIN_CANCELED
 } from './types';
 
 import { AUDIO_PATH } from '../constants';
@@ -35,6 +38,10 @@ window.Blob = Blob;
 const AAC_MIME = 'audio/aac';
 
 const FIREBASE_AUDIO_PATH = 'public_audios/';
+
+GoogleSignin.configure({
+  iosClientId: 'secret'
+});
 
 const getBlob = async (filename) => {
   console.log(`getBlob: ${filename}`);
@@ -171,11 +178,37 @@ export const loginWithFacebook = () => async dispatch => {
       console.log('Login success');
       const accessTokenData = await AccessToken.getCurrentAccessToken();
       const credential = firebase.auth.FacebookAuthProvider.credential(accessTokenData.accessToken);
-      firebase.auth().signInWithCredential(credential);
+      await firebase.auth().signInWithCredential(credential);
       dispatch({ type: FB_LOGIN_SUCCESS });
     }
   } catch (error) {
       console.error(error);
+  }
+};
+
+export const loginWithGoogle = () => async dispatch => {
+  let givenName;
+  let photo;
+  try {
+    dispatch({ type: USER_START_AUTHORIZING });
+    await GoogleSignin.hasPlayServices({ autoResolve: true });
+    await GoogleSignin.signIn()
+      .then((user) => {
+        givenName = user.givenName;
+        photo = user.photo;
+        const provider = new firebase.auth.GoogleAuthProvider();
+        const credential = provider.credential(user.idToken, user.accessToken);
+        return firebase.auth().signInWithCredential(credential);
+      }).then(() => {
+        dispatch({ type: GOOGLE_LOGIN_SUCCESS, payload: { name: givenName, avatar: photo } });
+      })
+      .catch((error) => {
+        dispatch({ type: GOOGLE_LOGIN_CANCELED });
+        console.error(error);
+      });
+  } catch (error) {
+    console.error(error);
+    dispatch({ type: GOOGLE_LOGIN_CANCELED });
   }
 };
 

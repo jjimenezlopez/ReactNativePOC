@@ -1,5 +1,6 @@
 import {
   SET_USER_NAME,
+  SET_USER_DATA,
   GET_USER_ID,
   GET_USER_NAME,
   GET_USER_DATA,
@@ -12,6 +13,8 @@ const INITIAL_STATE = {};
 export default function (state = INITIAL_STATE, action) {
   switch (action.type) {
     case SET_USER_NAME:
+      return { ...state, ...action.payload };
+    case SET_USER_DATA:
       return { ...state, ...action.payload };
     case GET_USER_ID:
       return { ...state, ...action.payload };
