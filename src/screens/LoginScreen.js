@@ -34,7 +34,7 @@ class LoginScreen extends Component {
       await this.props.loginWithFacebook();
       if (this.props.authorized) {
         await this.props.getUserFBData();
-        this.props.setUserName(this.props.fbinfo.name);
+        this.props.setUserData(this.props.fbinfo);
         this.props.navigator.resetTo({
           screen: 'ReactNativePOC.ChatScreen',
           title: 'Chat',

@@ -8,10 +8,12 @@ import FCM, { FCMEvent,
 
 import {
   USER_UID,
+  USER_NAME,
+  USER_AVATAR,
   NOTIFICATIONS_TOPIC
 } from '../constants';
 
-// confic code in repository
+// config code in repository
 const config = {
   apiKey: 'test',
   authDomain: 'test',
@@ -31,6 +33,8 @@ firebase.auth().onAuthStateChanged(async (user) => {
     registerNotificationEvents();
   } else {
     await AsyncStorage.removeItem(USER_UID);
+    await AsyncStorage.removeItem(USER_NAME);
+    await AsyncStorage.removeItem(USER_AVATAR);
     unsubscribeForNotifications();
   }
 });

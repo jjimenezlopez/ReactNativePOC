@@ -30,7 +30,9 @@ export const setUserData = (data) => async (dispatch) => {
   const { name, avatar } = data;
 
   await AsyncStorage.setItem(USER_NAME, name);
-  await AsyncStorage.setItem(USER_AVATAR, avatar);
+  if (avatar) {
+    await AsyncStorage.setItem(USER_AVATAR, avatar);
+  }
 
   dispatch({
     type: SET_USER_DATA,
@@ -40,8 +42,9 @@ export const setUserData = (data) => async (dispatch) => {
 
 export const getUserData = () => async dispatch => {
   const name = await AsyncStorage.getItem(USER_NAME);
+  const avatar = await AsyncStorage.getItem(USER_AVATAR);
   const id = await AsyncStorage.getItem(USER_UID);
-  dispatch({ type: GET_USER_DATA, payload: { name, id } });
+  dispatch({ type: GET_USER_DATA, payload: { avatar, name, id } });
 };
 
 export const getUserName = () => async dispatch => {
