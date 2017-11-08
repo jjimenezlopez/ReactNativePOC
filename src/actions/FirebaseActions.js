@@ -1,6 +1,6 @@
 /* globals window */
 import _ from 'lodash';
-import { Platform } from 'react-native';
+import { Platform, Alert } from 'react-native';
 import RNFetchBlob from 'react-native-fetch-blob';
 import { LoginManager, AccessToken } from 'react-native-fbsdk';
 import { GoogleSignin } from 'react-native-google-signin';
@@ -187,7 +187,11 @@ export const loginWithFacebook = () => async dispatch => {
       dispatch({ type: FB_LOGIN_SUCCESS });
     }
   } catch (error) {
-      console.error(error);
+      console.log(error);
+      dispatch({ type: FB_LOGIN_CANCELED });
+      if (error.code === 'auth/account-exists-with-different-credential') {
+        Alert.alert('Ups!', error.message);
+      }
   }
 };
 
@@ -217,8 +221,11 @@ export const loginWithGoogle = () => async dispatch => {
         console.error(error);
       });
   } catch (error) {
-    console.error(error);
+    console.log(error);
     dispatch({ type: GOOGLE_LOGIN_CANCELED });
+    if (error.code === 'auth/account-exists-with-different-credential') {
+      Alert.alert('Ups!', error.message);
+    }
   }
 };
 

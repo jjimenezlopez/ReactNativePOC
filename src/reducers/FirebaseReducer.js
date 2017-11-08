@@ -64,11 +64,11 @@ export default function (state = INITIAL_STATE, action) {
     case FB_LOGIN_SUCCESS:
       return { ...state, fbauthorizing: false, authorized: true };
     case FB_LOGIN_CANCELED:
-      return { ...state, autherror: true };
+      return { ...state, autherror: true, fbauthorizing: false };
     case GOOGLE_LOGIN_SUCCESS:
       return { ...state, googleauthorizing: false, authorized: true, googleinfo: { ...action.payload } };
     case GOOGLE_LOGIN_CANCELED:
-      return { ...state, autherror: true };
+      return { ...state, autherror: true, googleauthorizing: false };
     default:
       return state;
   }
