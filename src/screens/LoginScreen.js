@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { View, Alert } from 'react-native';
+import { View, Alert, Text } from 'react-native';
 import { connect } from 'react-redux';
 import { FormValidationMessage, Button, SocialIcon } from 'react-native-elements';
-import { GoogleSigninButton } from 'react-native-google-signin';
 import * as actions from '../actions';
 
 class LoginScreen extends Component {
@@ -87,24 +86,30 @@ class LoginScreen extends Component {
   }
 
   render() {
-    console.log(this.props.authorizing);
     return (
       <View style={styles.container}>
         <View style={styles.form}>
-          <SocialIcon
-            title={this.props.authorizing || this.props.requestingData ? 'Signing in...' : 'Sign In With Facebook'}
-            button
-            type='facebook'
-            disabled={this.props.authorizing || this.props.requestingData}
-            onPress={this.loginWithFacebook.bind(this)}
-            style={styles.socialButton}
-          />
-          <GoogleSigninButton
-            style={{ width: 48, height: 48 }}
-            size={GoogleSigninButton.Size.Wide}
-            color={GoogleSigninButton.Color.Dark}
-            onPress={this.loginWithGoogle.bind(this)}
-          />
+          <Text style={styles.loginText}>Por favor, haz login usando alguna de estas opciones.</Text>
+          <View style={styles.socialButtonWrapper}>
+            <View style={styles.socialButtonContainer}>
+              <SocialIcon
+                title={this.props.fbauthorizing || this.props.requestingData ? 'Signing in...' : 'Sign In With Facebook'}
+                button
+                type='facebook'
+                disabled={this.props.fbauthorizing || this.props.requestingData}
+                onPress={this.loginWithFacebook.bind(this)}
+                style={styles.socialButton}
+              />
+              <SocialIcon
+                title={this.props.googleauthorizing || this.props.requestingData ? 'Signing in...' : 'Sign In With Google'}
+                button
+                type='google-plus-official'
+                disabled={this.props.googleauthorizing || this.props.requestingData}
+                onPress={this.loginWithGoogle.bind(this)}
+                style={styles.socialButton}
+              />
+            </View>
+          </View>
         </View>
       </View>
     );
@@ -112,22 +117,28 @@ class LoginScreen extends Component {
 }
 
 const styles = {
-  container: { justifyContent: 'center', flex: 1 },
-  form: { justifyContent: 'center' },
+  container: { flex: 1 },
+  form: { justifyContent: 'center', alignItems: 'center', flex: 1 },
   button: { marginTop: 10 },
-  socialButton: { marginTop: 10, marginLeft: 14, marginRight: 14 }
+  socialButtonWrapper: { flexDirection: 'row' },
+  socialButtonContainer: { flex: 1 },
+  socialButton: { marginTop: 10, marginLeft: 14, marginRight: 14 },
+  loginText: { color: '#7e7e7e', textAlign: 'center', alignSelf: 'center', margin: 20 }
 };
 
-const mapStateToProps = ({ user, firebase }) => (
-  {
+const mapStateToProps = ({ user, firebase }) => {
+  console.log(firebase);
+  return {
     username: user.name,
     authorizing: firebase.authorizing,
+    fbauthorizing: firebase.fbauthorizing,
+    googleauthorizing: firebase.googleauthorizing,
     authorized: firebase.authorized,
     uid: user.id,
     fbinfo: user.fbinfo,
     requestingData: user.requestingData,
     googleinfo: firebase.googleinfo
-  }
-);
+  };
+};
 
 export default connect(mapStateToProps, actions)(LoginScreen);

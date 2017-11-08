@@ -21,6 +21,7 @@ import com.facebook.FacebookSdk;
 import com.facebook.reactnative.androidsdk.FBSDKPackage;
 import com.facebook.appevents.AppEventsLogger;
 import com.reactnativenavigation.NavigationApplication;
+import co.apptailor.googlesignin.RNGoogleSigninPackage;
 
 import com.facebook.FacebookSdk;
 

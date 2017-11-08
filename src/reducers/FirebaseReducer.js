@@ -2,6 +2,8 @@ import {
   UPLOAD_RECORDING_SUCCESS,
   // UPLOAD_RECORDING_FAILED
   USER_START_AUTHORIZING,
+  FB_START_AUTHORIZING,
+  GOOGLE_START_AUTHORIZING,
   USER_AUTHORIZED,
   USER_AUTHORIZATION_ERROR,
   USER_SIGNED_OUT,
@@ -30,6 +32,10 @@ export default function (state = INITIAL_STATE, action) {
     }
     case USER_START_AUTHORIZING:
       return { ...state, authorizing: true };
+    case FB_START_AUTHORIZING:
+      return { ...state, fbauthorizing: true };
+    case GOOGLE_START_AUTHORIZING:
+      return { ...state, googleauthorizing: true };
     case USER_AUTHORIZED:
       return { ...state, authorizing: false, authorized: true };
     case USER_AUTHORIZATION_ERROR:
@@ -56,11 +62,11 @@ export default function (state = INITIAL_STATE, action) {
     case NO_MORE_MESSAGES:
       return { ...state, loadEarlier: false };
     case FB_LOGIN_SUCCESS:
-      return { ...state, authorizing: false, authorized: true };
+      return { ...state, fbauthorizing: false, authorized: true };
     case FB_LOGIN_CANCELED:
       return { ...state, autherror: true };
     case GOOGLE_LOGIN_SUCCESS:
-      return { ...state, authorizing: false, authorized: true, googleinfo: { ...action.payload } };
+      return { ...state, googleauthorizing: false, authorized: true, googleinfo: { ...action.payload } };
     case GOOGLE_LOGIN_CANCELED:
       return { ...state, autherror: true };
     default:

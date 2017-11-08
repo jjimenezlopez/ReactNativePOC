@@ -1,5 +1,6 @@
 /* globals window */
 import _ from 'lodash';
+import { Platform } from 'react-native';
 import RNFetchBlob from 'react-native-fetch-blob';
 import { LoginManager, AccessToken } from 'react-native-fbsdk';
 import { GoogleSignin } from 'react-native-google-signin';
@@ -9,6 +10,8 @@ import {
   UPLOAD_RECORDING_SUCCESS,
   UPLOAD_RECORDING_FAILED,
   USER_START_AUTHORIZING,
+  FB_START_AUTHORIZING,
+  GOOGLE_START_AUTHORIZING,
   USER_AUTHORIZED,
   USER_AUTHORIZATION_ERROR,
   USER_SIGNED_OUT,
@@ -39,9 +42,11 @@ const AAC_MIME = 'audio/aac';
 
 const FIREBASE_AUDIO_PATH = 'public_audios/';
 
-GoogleSignin.configure({
-  iosClientId: 'secret'
-});
+if (Platform.OS === 'ios') {
+  GoogleSignin.configure({
+    iosClientId: '67374058432-k6kt5bdfu8f9e188mkcierkmuaone0g1.apps.googleusercontent.com'
+  });
+}
 
 const getBlob = async (filename) => {
   console.log(`getBlob: ${filename}`);
@@ -169,7 +174,7 @@ export const login = () => async dispatch => {
 
 export const loginWithFacebook = () => async dispatch => {
   try {
-    dispatch({ type: USER_START_AUTHORIZING });
+    dispatch({ type: FB_START_AUTHORIZING });
     const result = await LoginManager.logInWithReadPermissions(['public_profile', 'email']);
     if (result.isCancelled) {
       console.log('login canceled');
@@ -190,7 +195,12 @@ export const loginWithGoogle = () => async dispatch => {
   let givenName;
   let photo;
   try {
-    dispatch({ type: USER_START_AUTHORIZING });
+    dispatch({ type: GOOGLE_START_AUTHORIZING });
+    if (Platform.OS === 'android') {
+      await GoogleSignin.configure({
+        webClientId: '67374058432-0920dmtpfs6aosr942j8k1t9u8ogd4nh.apps.googleusercontent.com'
+      });
+    }
     await GoogleSignin.hasPlayServices({ autoResolve: true });
     await GoogleSignin.signIn()
       .then((user) => {

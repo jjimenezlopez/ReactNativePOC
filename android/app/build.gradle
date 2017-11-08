@@ -1,5 +1,4 @@
 apply plugin: "com.android.application"
-apply plugin: 'com.google.gms.google-services'
 
 import com.android.build.OutputFile
 
@@ -96,7 +95,7 @@ def enableProguardInReleaseBuilds = false
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.1"
+    buildToolsVersion '27.0.1'
 
     defaultConfig {
         applicationId "info.josejimenez.reactnativepoc"
@@ -149,19 +148,22 @@ android {
 }
 
 dependencies {
-    compile project(':react-native-google-signin')
     compile project(':react-native-fbsdk')
     compile project(':react-native-fcm')
-    compile 'com.google.firebase:firebase-core:10.0.1' //this decides your firebase SDK version
+    compile 'com.google.firebase:firebase-core:11.0.4' //this decides your firebase SDK version
     compile project(':react-native-sound')
     compile project(':react-native-vector-icons')
     compile project(':react-native-fetch-blob')
     compile project(':react-native-audio')
     compile fileTree(dir: "libs", include: ["*.jar"])
-    compile "com.android.support:appcompat-v7:23.0.1"
+    compile "com.android.support:appcompat-v7:25.0.1"
     compile "com.facebook.react:react-native:+"  // From node_modules
+    compile(project(":react-native-google-signin")){
+        exclude group: "com.google.android.gms" // very important
+    }
     compile project(':react-native-navigation')
     compile 'com.facebook.android:facebook-android-sdk:[4,5)'
+    compile 'com.google.android.gms:play-services-auth:11.0.4'
 
 }
 
@@ -171,3 +173,5 @@ task copyDownloadableDepsToLibs(type: Copy) {
     from configurations.compile
     into 'libs'
 }
+
+apply plugin: 'com.google.gms.google-services'
