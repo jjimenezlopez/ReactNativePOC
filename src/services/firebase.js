@@ -13,7 +13,7 @@ import {
   NOTIFICATIONS_TOPIC
 } from '../constants';
 
-// config code in repository
+// confic code in repository
 const config = {
   apiKey: 'test',
   authDomain: 'test',
@@ -32,10 +32,11 @@ firebase.auth().onAuthStateChanged(async (user) => {
     subscribeForNotifications();
     registerNotificationEvents();
   } else {
+    const userId = await AsyncStorage.getItem(USER_UID);
     await AsyncStorage.removeItem(USER_UID);
     await AsyncStorage.removeItem(USER_NAME);
     await AsyncStorage.removeItem(USER_AVATAR);
-    unsubscribeForNotifications();
+    unsubscribeForNotifications(userId);
   }
 });
 
@@ -64,9 +65,10 @@ const subscribeForNotifications = () => {
   }
 };
 
-const unsubscribeForNotifications = () => {
+const unsubscribeForNotifications = (userId) => {
   try {
     FCM.unsubscribeFromTopic(NOTIFICATIONS_TOPIC);
+    firebase.database().ref(`users/${userId}/`).remove();
   } catch (error) {
     console.log(error);
   }

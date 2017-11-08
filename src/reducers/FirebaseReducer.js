@@ -60,7 +60,7 @@ export default function (state = INITIAL_STATE, action) {
       return { ...state, messages: [newMessage, ...state.messages] };
     }
     case NO_MORE_MESSAGES:
-      return { ...state, loadEarlier: false };
+      return { ...state, loading: false, loadEarlier: false };
     case FB_LOGIN_SUCCESS:
       return { ...state, fbauthorizing: false, authorized: true };
     case FB_LOGIN_CANCELED:
