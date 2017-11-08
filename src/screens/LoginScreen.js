@@ -126,9 +126,8 @@ const styles = {
   loginText: { color: '#7e7e7e', textAlign: 'center', alignSelf: 'center', margin: 20 }
 };
 
-const mapStateToProps = ({ user, firebase }) => {
-  console.log(firebase);
-  return {
+const mapStateToProps = ({ user, firebase }) => (
+  {
     username: user.name,
     authorizing: firebase.authorizing,
     fbauthorizing: firebase.fbauthorizing,
@@ -138,7 +137,7 @@ const mapStateToProps = ({ user, firebase }) => {
     fbinfo: user.fbinfo,
     requestingData: user.requestingData,
     googleinfo: firebase.googleinfo
-  };
-};
+  }
+);
 
 export default connect(mapStateToProps, actions)(LoginScreen);

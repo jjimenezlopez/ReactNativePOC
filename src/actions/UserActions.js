@@ -59,7 +59,7 @@ export const getUserFBData = () => async dispatch => {
   return new Promise((resolve, reject) => {
     const infoRequest = new GraphRequest(
       '/me',
-      null,
+      { parameters: { fields: { string: 'name,picture' } } },
       (error, result) => {
         if (error) {
           console.error(error);
@@ -67,7 +67,12 @@ export const getUserFBData = () => async dispatch => {
           dispatch({ type: FB_DATA_ERROR });
         } else {
           resolve();
-          dispatch({ type: FB_DATA_REQUESTED, payload: result });
+          const { name, picture } = result;
+          const payload = { name };
+          if (!picture.data.is_silhouette) {
+            payload.avatar = picture.data.url;
+          }
+          dispatch({ type: FB_DATA_REQUESTED, payload });
         }
       }
     );
