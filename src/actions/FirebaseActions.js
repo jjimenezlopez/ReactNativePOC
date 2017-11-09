@@ -122,7 +122,11 @@ export const fetchMessages = (lastId) => async dispatch => {
         }
 
         if (messages.length) {
-          dispatch({ type: END_MESSAGES_FETCH, payload: { messages: messages.reverse() } });
+          const payload = { messages: messages.reverse() };
+          if (!lastId) {
+            payload.clearList = true;
+          }
+          dispatch({ type: END_MESSAGES_FETCH, payload });
         }
 
         if (!messages.length || messages.length < 19) {

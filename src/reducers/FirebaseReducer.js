@@ -51,8 +51,9 @@ export default function (state = INITIAL_STATE, action) {
     case START_MESSAGES_FETCH:
       return { ...state, loading: true };
     case END_MESSAGES_FETCH: {
-      const { messages } = action.payload;
-      return { ...state, loading: false, messages: [...state.messages, ...messages] };
+      const { messages, clearList } = action.payload;
+      const messagesToShow = clearList ? messages : [...state.messages, ...messages]; 
+      return { ...state, loading: false, messages: messagesToShow };
     }
     case NEW_MESSAGE: {
       const { newMessage } = action.payload;
