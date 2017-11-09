@@ -27,7 +27,10 @@ import {
   FB_LOGIN_SUCCESS,
   FB_LOGIN_CANCELED,
   GOOGLE_LOGIN_SUCCESS,
-  GOOGLE_LOGIN_CANCELED
+  GOOGLE_LOGIN_CANCELED,
+  LIKE_SAVED,
+  MESSAGE_CHANGED,
+  MESSAGE_CHANGED_ERROR
 } from './types';
 
 import { AUDIO_PATH } from '../constants';
@@ -146,11 +149,27 @@ export const listenMessages = () => async dispatch => {
         console.log('New message received');
         const newMessage = child.val();
         newMessage._id = child.key; // eslint-disable-line
+        newMessage.key = child.key;
         dispatch({ type: NEW_MESSAGE, payload: { newMessage } });
       });
   } catch (error) {
     console.error(error);
     dispatch({ type: NEW_MESSAGE_ERROR });
+  }
+};
+
+export const listenMessagesForChanges = () => async dispatch => {
+  try {
+    firebase.database().ref('messages').orderByChild('createdAt')
+      .on('child_changed', (snapshot) => {
+        console.log('Changed message received');
+        const message = snapshot.val();
+        message._id = message.key = snapshot.key; // eslint-disable-line
+        dispatch({ type: MESSAGE_CHANGED, payload: { message } });
+      });
+  } catch (error) {
+    console.error(error);
+    dispatch({ type: MESSAGE_CHANGED_ERROR });
   }
 };
 
@@ -160,6 +179,17 @@ export const disconnectListenMessages = () => dispatch => {
     dispatch({ type: DISCONNECTED_LISTENING_MESSAGES });
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const likeMessage = (messageKey, userId, value) => dispatch => {
+  try {
+    const data = {};
+    data[userId] = value;
+    firebase.database().ref(`messages/${messageKey}/likes/`).update(data);
+    dispatch({ type: LIKE_SAVED });
+  } catch (error) {
+    console.error(error);
   }
 };
 

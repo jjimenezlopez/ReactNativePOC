@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import {
   UPLOAD_RECORDING_SUCCESS,
   // UPLOAD_RECORDING_FAILED
@@ -16,7 +17,8 @@ import {
   FB_LOGIN_SUCCESS,
   FB_LOGIN_CANCELED,
   GOOGLE_LOGIN_SUCCESS,
-  GOOGLE_LOGIN_CANCELED
+  GOOGLE_LOGIN_CANCELED,
+  MESSAGE_CHANGED
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -52,12 +54,11 @@ export default function (state = INITIAL_STATE, action) {
       return { ...state, loading: true };
     case END_MESSAGES_FETCH: {
       const { messages, clearList } = action.payload;
-      const messagesToShow = clearList ? messages : [...state.messages, ...messages]; 
+      const messagesToShow = clearList ? messages : [...state.messages, ...messages];
       return { ...state, loading: false, messages: messagesToShow };
     }
     case NEW_MESSAGE: {
       const { newMessage } = action.payload;
-
       return { ...state, messages: [newMessage, ...state.messages] };
     }
     case NO_MORE_MESSAGES:
@@ -70,6 +71,12 @@ export default function (state = INITIAL_STATE, action) {
       return { ...state, googleauthorizing: false, authorized: true, googleinfo: { ...action.payload } };
     case GOOGLE_LOGIN_CANCELED:
       return { ...state, autherror: true, googleauthorizing: false };
+    case MESSAGE_CHANGED: {
+      const messageChanged = action.payload.message;
+      const index = _.findIndex(state.messages, { key: messageChanged.key });
+      state.messages.splice(index, 1, messageChanged);
+      return { ...state, messages: [...state.messages] };
+    }
     default:
       return state;
   }

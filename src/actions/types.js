@@ -27,3 +27,6 @@ export const FB_DATA_ERROR = 'fb_data_error';
 export const FB_DATA_REQUEST = 'fb_data_request';
 export const GOOGLE_LOGIN_SUCCESS = 'google_login_success';
 export const GOOGLE_LOGIN_CANCELED = 'google_login_canceled';
+export const LIKE_SAVED = 'like_saved';
+export const MESSAGE_CHANGED = 'message_changed';
+export const MESSAGE_CHANGED_ERROR = 'message_changed_error';

@@ -1,6 +1,8 @@
+import _ from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { View, Text, ActivityIndicator, Platform } from 'react-native';
+import { View, Text, ActivityIndicator, Platform, Clipboard } from 'react-native';
+import { Icon } from 'react-native-elements';
 import { GiftedChat, Actions, Bubble } from 'react-native-gifted-chat';
 import CustomView from '../components/CustomView';
 import * as actions from '../actions';
@@ -44,6 +46,7 @@ class ChatScreen extends Component {
 
   componentDidMount() {
     this.props.listenMessages();
+    this.props.listenMessagesForChanges();
   }
 
   componentWillUnmount() {
@@ -62,6 +65,31 @@ class ChatScreen extends Component {
     this.setState({ isLoadingEarlier: true });
     await this.props.fetchMessages(this.props.messages[this.props.messages.length - 1].key);
     setTimeout(() => { this.setState({ isLoadingEarlier: false }); }, 500);
+  }
+
+  onLongPress(context, currentMessage) {
+    if (currentMessage) {
+      const options = [
+        currentMessage.likes[this.props.id] ? 'Unlike' : 'I like it!',
+        'Copy Text',
+        'Cancel',
+      ];
+      const cancelButtonIndex = options.length - 1;
+      context.actionSheet().showActionSheetWithOptions({
+          options,
+          cancelButtonIndex,
+        },
+        (buttonIndex) => {
+          switch (buttonIndex) { // eslint-disable-line
+            case 0:
+              this.props.likeMessage(currentMessage.key, this.props.id, !currentMessage.likes[this.props.id]);
+              break;
+            case 1:
+              Clipboard.setString(currentMessage.text);
+              break;
+          }
+        });
+    }
   }
 
   async logout() {
@@ -84,8 +112,15 @@ class ChatScreen extends Component {
       text,
       createdAt: new Date().getTime()
     };
-
     await this.props.sendMessage(message);
+  }
+
+  likeStyles(currentMessageUser) {
+    const position = currentMessageUser._id === this.props.id ? 'flex-end' : 'flex-start'; // eslint-disable-line
+    return {
+      ...styles.messageLikes,
+      justifyContent: position
+    };
   }
 
   renderCustomActions(props) {
@@ -123,21 +158,39 @@ class ChatScreen extends Component {
     return null;
   }
 
+  renderLikes(message) {
+    if (message.likes) {
+      const likes = _.filter(message.likes, (like) => (like === true));
+      if (likes.length) {
+        return (
+          <View style={this.likeStyles(message.user)}>
+            <Text style={styles.messageLikesText}>{likes.length}</Text>
+            <Icon
+              name='thumb-up'
+              color='#BABABA'
+              size={18}
+            />
+          </View>
+        );
+      }
+    }
+  }
+
   renderBubble(props) {
     if (props.isSameUser(props.currentMessage, props.previousMessage) && props.isSameDay(props.currentMessage, props.previousMessage)) {
       return (
-        <Bubble
-          {...props}
-        />
+        <View>
+          <Bubble {...props} />
+          {this.renderLikes(props.currentMessage)}
+        </View>
       );
     }
 
     return (
       <View>
         {this.renderUsername(props.currentMessage)}
-        <Bubble
-          {...props}
-        />
+        <Bubble {...props} />
+        {this.renderLikes(props.currentMessage)}
       </View>
     );
   }
@@ -157,6 +210,7 @@ class ChatScreen extends Component {
         onSend={(messages) => this.sendMessage(messages)}
         loadEarlier={this.props.loadEarlier}
         onLoadEarlier={this.onLoadEarlier.bind(this)}
+        onLongPress={this.onLongPress.bind(this)}
         isLoadingEarlier={this.state.isLoadingEarlier}
         renderActions={this.renderCustomActions.bind(this)}
         renderCustomView={this.renderCustomView}
@@ -172,6 +226,15 @@ class ChatScreen extends Component {
 const styles = {
   username: {
     color: 'grey'
+  },
+  messageLikes: {
+    flexDirection: 'row'
+  },
+  messageLikesText: {
+    fontSize: 16,
+    color: '#BABABA',
+    marginRight: 8,
+    fontWeight: 'bold'
   }
 };
 
