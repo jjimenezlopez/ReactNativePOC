@@ -69,11 +69,16 @@ class ChatScreen extends Component {
 
   onLongPress(context, currentMessage) {
     if (currentMessage) {
-      const options = [
-        currentMessage.likes[this.props.id] ? 'Unlike' : 'I like it!',
-        'Copy Text',
-        'Cancel',
-      ];
+      let likeValue = false;
+      let likeText = 'I like it!';
+      if (currentMessage.likes) {
+        if (Object.prototype.hasOwnProperty.call(currentMessage.likes, this.props.id)) {
+          likeText = currentMessage.likes[this.props.id] ? 'Dislike' : 'I like it!';
+          likeValue = currentMessage.likes[this.props.id];
+        }
+      }
+
+      const options = [likeText, 'Copy Text', 'Cancel'];
       const cancelButtonIndex = options.length - 1;
       context.actionSheet().showActionSheetWithOptions({
           options,
@@ -82,7 +87,7 @@ class ChatScreen extends Component {
         (buttonIndex) => {
           switch (buttonIndex) { // eslint-disable-line
             case 0:
-              this.props.likeMessage(currentMessage.key, this.props.id, !currentMessage.likes[this.props.id]);
+              this.props.likeMessage(currentMessage.key, this.props.id, !likeValue);
               break;
             case 1:
               Clipboard.setString(currentMessage.text);
